@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Question</title>
+</head>
+<body class="body">
+<br>
+<a class="myButton" href="{{ url_for('question_list') }}">
+    Go Back to the question list
+</a>
+<br>
+<br>
+<div class="panel-wrapper">
+    <a href="#show" class="show btn" id="show">Edit this question!</a>
+    <a href="#hide" class="hide btn" id="hide">I don't want to edit this question</a>
+    <div class="panel">
+
+        {% import 'question_form.html' as question_form %}
+        {{ question_form.render(
+            question_url=url_for('edit_question', question_id=question.id),
+            title=question.title,
+            message=question.message,
+            image=question.image
+        ) }}
+    </div><!-- end panel -->
+    <div class="fade"></div>
+</div>
+
+<br>
+<br>
+<ul class="tilesWrap">
+    <li>
+        <h3>
+            Question Title:
+        </h3>
+        <p>
+            > {{ question.title }}
+        </p>
+    </li>
+    <li>
+        <h3>
+            Question Message:
+        </h3>
+        <p>
+            > {{ question.message }}
+        </p>
+    </li>
+    <li>
+        <h3>
+            {% if question.image %}
+                </h3>
+                <p>-
+                <img alt="" src="{{ question.image }}" width="170" height="150"/>
+                <br>
+            {% endif %}
+            </p>
+    </li>
+</ul>
+
+
+<form class="form"
+      method="POST"
+      action="{{ url_for('add_comment_to_question', question_id=question.id) }}">
+    <label for="message"> Comment Question: </label>
+    <input type="text" id="message" name="message"/><br/>
+    <button type="submit">Post Comment</button>
+</form>
+
+<br>
+<div class="X">
+    <h1>Comments of this question</h1>
+    <ul class="SG">
+        <li class="sgLi">
+            <div class="box">
+                <ul class="df">
+                    {% for comment in comments %}
+                        {% if question.id == comment.question_id %}
+                            <li>
+                                {{ comment["message"] }}
+                            </li>
+                            <a href="{{ url_for("edit_comment", question_id=question.id, comment_id=comment.id) }}">
+                                Edit Comment
+                            </a>
+                            <br>
+                            <a href="{{ url_for("delete_question_comment", question_id=question.id, comment_id=comment.id) }}">
+                                Delete Comment
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+
+
+<br>
+
+
+<br>
+<h3> Question Answer(s):</h3>
+<ul class="tilesWrap">
+
+    {% for answer in answers %}
+        <li><h3>Check out this answer:</h3>
+            <p>
+               > {{ answer["message"] }}
+            </p>
+            <button>
+                <a
+                        href="{{ url_for('delete_answer', answer_id=answer.id, question_id=answer.question_id) }}"
+                >
+
+                    Delete Answer
+                </a>
+            </button>
+
+            <br/>
+            <ul class="tilesWrap">
+                <button>
+                    <a href="{{ url_for("edit_answer", question_id=answer.question_id, answer_id=answer.id) }}">
+                        Edit Answer
+                    </a>
+                </button>
+                {#                {% import 'answer_form.html' as answer_form %}#}
+                {#                {{ answer_form.render(#}
+                {#            question_url=url_for('edit_answer', question_id=question.id, answer_id=answer.id),#}
+                {#            message=question.message,#}
+                {#            image=question.image#}
+                {#        ) }}#}
+                <br>
+                <h3>Check out the comments bellow :))</h3>
+                <br>
+                {% for comment in comments %}
+                    {% if answer.id == comment.answer_id %}
+                        <p>
+                            > {{ comment["message"] }}
+                        </p>
+                        <button>
+                            <a href="{{ url_for("edit_comment", question_id=question.id, comment_id=comment.id) }}">
+                                Edit Comment
+                            </a>
+                        <a href="{{ url_for("delete_answer_comment", question_id=question.id,answer_id=answer.id, comment_id=comment.id) }}">
+                                Delete Comment
+                            </a>
+                        </button>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <br/>
+            <p>
+                This answer has a score of {{ answer["vote_number"] }}. You can
+                vote like or dislike
+            </p>
+
+            <form
+                    action="{{ url_for('vote_up_answer', answer_id=answer["id"], question_id=question.id) }}"
+                    method="POST"
+            >
+                <button type="submit">_____Vote up_____</button>
+            </form>
+            <form
+                    action="{{ url_for('vote_down_answer', answer_id=answer["id"], question_id=question.id) }}"
+                    method="POST"
+            >
+                <br>
+                <button type="submit">____Vote down____</button>
+            </form>
+            <br>
+
+            <form
+                    action="{{ url_for('add_comment_to_answer', answer_id=answer["id"], question_id=question.id) }}"
+                    method="POST">
+                <label for="message"><h3>Post a comment to this answer: </h3></label>
+                <input type="text" id="message" name="message"/><br/>
+                <button type="submit">Post Comment</button>
+            </form>
+            <br>
+
+            <br>
+
+            <br/>
+
+        </li>
+    {% endfor %}
+<br>
+    <form class="form"
+            method="POST"
+            action="{{ url_for('add_answer', question_id=question.id) }}"
+    >
+        <label for="message"> Answer Message: </label>&nbsp;
+        <input type="text" id="message" name="message"/><br/>
+        <button type="submit">Submit Answer</button>
+    </form>
+</ul>
+
+
+<a class="myButton" href="{{ url_for('delete_question', question_id=question.id) }}">
+    Delete Question
+</a>
+<br>
+</body>
+</html>
+
+

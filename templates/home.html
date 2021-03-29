@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body class="body">
+
+<h2>
+    Welcome to the ASK MATE PROJECT! Here, you can ask some questions, answer some, maybe edit some of them and see
+others opinion about stuff! Have fun!
+</h2>
+
+
+
+<form action="#" class="form">
+    <label for="search">Search:</label>
+    <input type="search" name="search">
+    <input type="submit">
+</form>
+<br>
+<a class="myButton" href="{{ url_for('question_list') }}">See all the questions</a>
+
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            {% for header in "id", "submission_time","view_number",
+                    "vote_number", "title", "message", "image", "vote_up", "vote_down" %}
+                <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for question in questions %}
+            <tr>
+                <td>{{ question.id }}</td>
+                <td>{{ question.submission_time }}</td>
+                <td>{{ question.view_number }}</td>
+                <td>{{ question.vote_number }}</td>
+                <td>
+                    <strong>
+                        <a
+                                href="{{ url_for('display_question_by_id', question_id=question.id) }}"
+                        >
+                            {{ question.title }}
+                        </a>
+                    </strong>
+                </td>
+                <td>{{ question.message }}</td>
+                <td>
+                    {% if question.image %}
+                        <img
+                                src="{{ question.image }}"
+                                alt=""
+                                width="20"
+                                height="20"
+                        />
+                    {% endif %}
+                </td>
+                <td>
+                    <form
+                            action="{{ url_for('vote_up_question', question_id=question["id"]) }}"
+                            method="POST"
+                    >
+                        <button type="submit">Vote Up</button>
+                    </form>
+                </td>
+                <td>
+                    <form
+                            action="{{ url_for('vote_down_question', question_id=question["id"]) }}"
+                            method="POST"
+                    >
+                        <button type="submit">Vote Down</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br><br><br>
+</div>
+</body>
+</html>

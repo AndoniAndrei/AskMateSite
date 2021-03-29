@@ -1,0 +1,15 @@
+{% macro render(question_url, title='', message='', image='' ) %}
+    <form class="form" action="{{ question_url }}" method="POST" enctype="multipart/form-data">
+        <label for="title">Question title:</label>
+        <input name="title" id="title" type="text" value="{{ title }}"/>
+
+        <label for="message">Message: </label>
+        <textarea id="message" name="message">{{ message }}</textarea>
+
+        <label for="image">Add Image URL here:</label>
+        <input name="image" id="image" type="text" value="{{ image }}"/>
+
+        <button type="submit">Save</button>
+    </form>
+
+{% endmacro %}

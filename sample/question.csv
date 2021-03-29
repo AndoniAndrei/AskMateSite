@@ -1,0 +1,6 @@
+id,submission_time,view_number,vote_number,title,message,image
+3,1614929280.5046213,1369,61,Drawing canvas with an image picked with Cordova Camera Plugin,"I'm getting an image from device and drawing a canvas with filters using Pixi JS. It works all well using computer to get an image. But when I'm on IOS, it throws errors such as cross origin issue, or that I'm trying to use an unknown format.
+
+This is the code I'm using to draw the image (that works on web/desktop but not cordova built ios app)",placeholder.png
+5,1614932649.4408119,13,0,what is drugs?,Please describe,covor-personalizat-minge-fotbal.jpg
+4,1614932765.68981,67,16,Why did the chicken crossed the road?,please explain why did the chicken went to the other side,images.jfif

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+</head>
+<body class="body">
+<form class="form" action="{{ question_url }}" method="POST" enctype="multipart/form-data">
+    <label for="message">Message: </label>
+    <textarea id="message" name="message">{{ message }}</textarea>
+
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
