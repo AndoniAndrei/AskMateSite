@@ -29,7 +29,11 @@
     </div><!-- end panel -->
     <div class="fade"></div>
 </div>
-
+<form class="form" method="POST" action="{{ url_for("add_tag", question_id=question.id) }}">
+    <label for="name"> Question Tag </label>&nbsp;
+    <input type="text" id="name" name="name"><br>
+    <input type="submit" name="submit tag">
+</form>
 <br>
 <br>
 <ul class="tilesWrap">

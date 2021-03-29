@@ -216,11 +216,28 @@ def get_last_5_questions(cursor):
     )
     return cursor.fetchall()
 
-# @database_common.connection_handler
-# def delete_comment(cursor, question_id):
-#     cursor.execute(f"""
-#     DELETE from comment, message = %(message)s
-#         WHERE id = %(id)s
-#     """,
-#     )
-#     return cursor.fetchall()
+
+@database_common.connection_handler
+def add_tag(cursor, name):
+    cursor.execute(
+        f"""
+    INSERT INTO tag(name)
+    VALUES (%(name)s)""",
+        {
+            "name" : name
+        },
+    )
+
+
+
+@database_common.connection_handler
+def uptdate_question_tag_table(cursor, question_id, tag_id):
+    cursor.execute(f"""
+    INSERT INTO question_tag(question_id, tag_id)
+    VALUES (%(question_id)s, %(tag_id)s)
+    """,
+        {
+            "question_id" : question_id,
+            "tag_id" : tag_id
+        })
+

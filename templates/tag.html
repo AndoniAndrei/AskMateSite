@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Tag</title>
+</head>
+<body class="body">
+<br>
+<h4>Please add a question tag</h4>
+<br>
+<form class="form" method="POST" action="{{ url_for("add_tag", question_id=question.id) }}">
+    <label for="name"> Question Tag </label>&nbsp;
+    <input type="text" id="name" name="name"><br>
+    <input type="submit" name="submit tag">
+</form>
+
+
+</body>
+</html>

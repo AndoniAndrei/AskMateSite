@@ -155,15 +155,26 @@ def edit_comment(question_id, comment_id):
         return redirect(url_for("display_question_by_id", question_id=question_id))
     return render_template("comment_form.html")
 
-@app.route("/comments/<comment_id>/<question_id>/delete", methods=["GET", "POST"])
+@app.route("/comments/<comment_id>/<question_id>/delete")
 def delete_question_comment(comment_id, question_id):
     repositories.delete_data(comment_id, "comment")
     return redirect(url_for("display_question_by_id", question_id=question_id))
 
-@app.route("/comments/<comment_id>/<question_id>/<answer_id>/delete", methods=["GET", "POST"])
+@app.route("/comments/<comment_id>/<question_id>/<answer_id>/delete")
 def delete_answer_comment(comment_id,question_id, answer_id):
     repositories.delete_data(comment_id, "comment")
     return redirect(url_for("display_question_by_id",question_id=question_id, answer_id=answer_id))
+
+
+@app.route("/question/<question_id>/new-tag", methods=["POST"])
+def add_tag(question_id):
+    if request.method == "POST":
+        name = request.form["name"]
+        repositories.add_tag(name)
+        return redirect("/question/" + question_id)
+
+    question = repositories.get_data_by_question_id("question", question_id)[0]
+    return render_template("tag.html", question=question)
 
 
 if __name__ == "__main__":
