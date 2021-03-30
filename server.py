@@ -45,7 +45,9 @@ def display_question_by_id(question_id):
 @app.route("/search/<search_phrase>", methods=["POST", "GET"])
 def search(search_phrase):
     found_data = repositories.search(search_phrase) or repositories.search_answer(search_phrase)
+
     return render_template("search.html", found_data=found_data, search_phrase=search_phrase)
+
 
 
 @app.route("/add-question", methods=["GET", "POST"])
