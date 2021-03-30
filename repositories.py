@@ -195,16 +195,41 @@ def add_comment_answer(cursor, answer_id, message):
         )
 
 
+# @database_common.connection_handler
+# def search(cursor, search_phrase):
+#     cursor.execute(f"""
+#     SELECT * FROM question
+#     WHERE message LIKE %(search_phrase)s OR title LIKE %(search_phrase)s
+#     """, {
+#         "search_phrase": f"%{search_phrase}%"
+#     })
+#     # cursor.execute(f"""
+#     # SELECT * FROM answer
+#     # WHERE message LIKE %(search_phrase)s
+#     # """,    {
+#     #     "search_phrase" : f"%{search_phrase}%"
+#     # })
+#     return cursor.fetchall()
 @database_common.connection_handler
 def search(cursor, search_phrase):
     cursor.execute(f"""
-    SELECT * FROM question 
+    SELECT * FROM question
     WHERE message LIKE %(search_phrase)s OR title LIKE %(search_phrase)s
     """, {
         "search_phrase": f"%{search_phrase}%"
     })
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def search_answer(cursor, search_phrase):
+    cursor.execute(f"""
+    SELECT * FROM answer
+    WHERE message LIKE %(search_phrase)s
+    """,    {
+        "search_phrase" : f"%{search_phrase}%"
+    })
+    return cursor.fetchall()
 
 
 @database_common.connection_handler

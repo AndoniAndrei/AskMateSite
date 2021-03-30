@@ -9,7 +9,11 @@
 
 
 {% for search in found_data %}
-    {{ search }}
+      {{  search.title }}
+    <br>
+    <p style="margin-left:20%; margin-right:20%;">
+    {{ search.message }}
+    </p>
 {% endfor %}
 
 </body>

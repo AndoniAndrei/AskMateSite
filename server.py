@@ -44,7 +44,7 @@ def display_question_by_id(question_id):
 
 @app.route("/search/<search_phrase>", methods=["POST", "GET"])
 def search(search_phrase):
-    found_data = repositories.search(search_phrase)
+    found_data = repositories.search(search_phrase) or repositories.search_answer(search_phrase)
     return render_template("search.html", found_data=found_data, search_phrase=search_phrase)
 
 
@@ -185,6 +185,25 @@ def add_tag(question_id):
 def delete_tag(question_id, tag_id):
     repositories.delete_data(tag_id, "tag")
     return redirect(url_for("display_question_by_id", question_id=question_id, tag_id=tag_id))
+
+
+# @app.route("/ajaxlivesearch",methods=["POST","GET"])
+# def fancy_search():
+#     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#     if request.method == 'POST':
+#         search_word = request.form['query']
+#         print(search_word)
+#         if search_word == '':
+#             query = "SELECT * from employee ORDER BY id"
+#             cur.execute(query)
+#             employee = cur.fetchall()
+#         else:
+#             query = "SELECT * from employee WHERE name LIKE '%{}%' OR email LIKE '%{}%' OR phone LIKE '%{}%' ORDER BY id DESC LIMIT 20".format(search_word,search_word,search_word)
+#             cur.execute(query)
+#             numrows = int(cur.rowcount)
+#             employee = cur.fetchall()
+#             print(numrows)
+#     return jsonify({'htmlresponse': render_template('response.html', employee=employee, numrows=numrows)})
 
 
 if __name__ == "__main__":
