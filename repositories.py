@@ -281,3 +281,6 @@ def get_question_tags(cursor, question_id):
         cursor.execute(query1, values1)
         tags.append(cursor.fetchone())
     return tags
+
+
+

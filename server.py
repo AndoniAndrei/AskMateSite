@@ -179,5 +179,13 @@ def add_tag(question_id):
     return render_template("tag.html", question=question)
 
 
+
+
+@app.route("/question/<question_id>/tag/<tag_id>/delete")
+def delete_tag(question_id, tag_id):
+    repositories.delete_data(tag_id, "tag")
+    return redirect(url_for("display_question_by_id", question_id=question_id, tag_id=tag_id))
+
+
 if __name__ == "__main__":
     app.run(port=4000, debug=True)
