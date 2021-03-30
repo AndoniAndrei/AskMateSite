@@ -29,6 +29,12 @@
     </div><!-- end panel -->
     <div class="fade"></div>
 </div>
+<br>
+<br>
+{% for tag in tags  %}
+{{ tag.name }}
+{% endfor %}
+
 <form class="form" method="POST" action="{{ url_for("add_tag", question_id=question.id) }}">
     <label for="name"> Question Tag </label>&nbsp;
     <input type="text" id="name" name="name"><br>

@@ -21,6 +21,8 @@ def get_data_by_question_id(cursor, table, data_id):
         column = "question_id"
     if table == "comment":
         column = "question_id"
+    if table == "question_tag":
+        column = "question_id"
     cursor.execute(
         f"""
     SELECT * FROM {table}
@@ -217,21 +219,32 @@ def get_last_5_questions(cursor):
     return cursor.fetchall()
 
 
-@database_common.connection_handler
-def add_tag(cursor, name):
-    cursor.execute(
-        f"""
-    INSERT INTO tag(name)
-    VALUES (%(name)s)""",
-        {
-            "name" : name
-        },
-    )
-
-
 
 @database_common.connection_handler
-def uptdate_question_tag_table(cursor, question_id, tag_id):
+def add_tag(cursor, tag):
+    query = """
+        SELECT id
+        FROM tag
+        WHERE name = %(tag)s
+    """
+    values = {"tag": tag}
+    cursor.execute(query, values)
+    tag_id = cursor.fetchone()
+    if tag_id is None:
+        query = """
+            INSERT INTO tag (name)
+            VALUES (%(tag)s)
+            RETURNING id
+        """
+        cursor.execute(query, values)
+        tag_id = cursor.fetchone()
+    return tag_id['id']
+
+
+
+
+@database_common.connection_handler
+def update_question_tag_table(cursor, question_id, tag_id):
     cursor.execute(f"""
     INSERT INTO question_tag(question_id, tag_id)
     VALUES (%(question_id)s, %(tag_id)s)
@@ -241,3 +254,30 @@ def uptdate_question_tag_table(cursor, question_id, tag_id):
             "tag_id" : tag_id
         })
 
+@database_common.connection_handler
+def get_question_tags(cursor, question_id):
+    tags = []
+    query = """
+        SELECT tag_id
+        FROM question_tag
+        WHERE question_id = %(id)s
+   """
+
+    values = {
+        "id": question_id
+    }
+    cursor.execute(query,values)
+    ids = cursor.fetchall()
+
+    query1 = """
+        SELECT *
+        FROM tag
+        WHERE id = %(id)s
+    """
+    for idz in ids:
+        values1 = {
+            "id": idz["tag_id"]
+        }
+        cursor.execute(query1, values1)
+        tags.append(cursor.fetchone())
+    return tags

@@ -38,7 +38,8 @@ def display_question_by_id(question_id):
     question = repositories.get_data_by_question_id("question", question_id)[0]
     answers = repositories.get_data_by_question_id("answer", question_id)
     comments = repositories.get_comments()
-    return render_template("display_question.html", question=question, answers=answers, comments=comments)
+    tags = repositories.get_question_tags(question_id)
+    return render_template("display_question.html", question=question, answers=answers, comments=comments, tags=tags)
 
 
 @app.route("/search/<search_phrase>", methods=["POST", "GET"])
@@ -170,7 +171,8 @@ def delete_answer_comment(comment_id,question_id, answer_id):
 def add_tag(question_id):
     if request.method == "POST":
         name = request.form["name"]
-        repositories.add_tag(name)
+        tag_id = repositories.add_tag(name)
+        repositories.update_question_tag_table(question_id, tag_id)
         return redirect("/question/" + question_id)
 
     question = repositories.get_data_by_question_id("question", question_id)[0]
