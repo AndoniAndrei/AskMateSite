@@ -197,12 +197,27 @@ def add_comment_answer(cursor, answer_id, message):
 
 
 @database_common.connection_handler
-def create_user_registration(cursor):
+def create_user_registration(cursor, username, password_hash):
+    date_of_registration = controller.date_and_time()
     cursor.execute(f"""
-    CREATE TABLE user_registration ( 
+    INSERT INTO users(username, password_hash, date_of_registration, reputation) 
+    VALUES (%(username)s, %(password_hash)s, %(date_of_registration)s, 0)
+      """, {
+        'username' : username,
+        'password_hash' : password_hash,
+        'date_of_registration' : date_of_registration,
+
+    })
+    return
+
+
+@database_common.connection_handler
+def username_exist(cursor, username):
+    cursor.execute("""
+    SELECT username from users
     """)
-
-
+    list_of_all_users = [user['username']for user in cursor.fetchall()]
+    return username in list_of_all_users
 
 @database_common.connection_handler
 def search(cursor, search_phrase):
@@ -301,5 +316,14 @@ def get_question_tags(cursor, question_id):
         tags.append(cursor.fetchone())
     return tags
 
+
+@database_common.connection_handler
+def get_hashed_password(cursor, username):
+    cursor.execute(""" 
+            SELECT password_hash FROM users
+            WHERE username = %(username)s
+            """, {'username':username})
+    hashed_password = cursor.fetchone()
+    return hashed_password['password_hash']
 
 

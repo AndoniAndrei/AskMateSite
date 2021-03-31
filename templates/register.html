@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Regristration</title>
+</head>
+<body>
+<<div class="input_form">
+        <h1>Registration</h1><br>
+        <form action="/registration", method="post">
+            <p>
+                <label for="username">Username:</label><br>
+                <input id="username" name="username" required maxlength="20">
+            </p>
+            <p>
+                <label for="password">Password:</label><br>
+                <input id="password" type="password"  name="password" required>
+            </p>
+            <p>
+                <label for="password2">Password again:</label><br>
+                <input id="password2" type="password" name="password2" required>
+            </p>
+            <button type="submit">Submit</button>
+        </form>
+        <div class="error_message">
+            {% if error_message %}
+            <p>{{ error_message }}</p>
+            {% endif %}
+        </div>
+</div>
+</body>
+</html>

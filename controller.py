@@ -1,15 +1,17 @@
+import bcrypt
 from datetime import datetime
-import database_common
-from flask import render_template, request
 
 
 def date_and_time():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-# @database_common.connection.handler
-# def get_header_from_tables(cursor,table):
-#     cursor.execute(f"""SELECT * FROM information_schema.columns WHERE table_name = {table}
-#     """)
-#     headers = cursor.fetchall()
-#     return headers
+def hash_password(plain_text_password):
+    # By using bcrypt, the salt is saved into the hash itself
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)

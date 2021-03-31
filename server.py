@@ -1,5 +1,5 @@
-from flask import Flask, url_for, render_template, request, redirect
-import repositories
+from flask import Flask, url_for, render_template, request, redirect, session
+import repositories, controller
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -189,8 +189,40 @@ def delete_tag(question_id, tag_id):
     return redirect(url_for("display_question_by_id", question_id=question_id, tag_id=tag_id))
 
 
-@app.route("/registration")
+@app.route("/registration", methods=["GET", "POST"])
 def user_registration():
+    if request.method == "GET":
+        return render_template("register.html")
+    username = request.form["username"]
+    password = request.form["password"]
+    password2 = request.form["password2"]
+    if username == repositories.username_exist(username):
+        error_message = 'This username is already taken, please try again!'
+        return render_template("register.html", error_message=error_message)
+    elif password != password2:
+        error_message = 'The passwords do not match!, Please try again!'
+        return render_template("register.html", error_message=error_message)
+    password_hash = controller.hash_password(password)
+    repositories.create_user_registration(username, password_hash)
+    return redirect("/")
+
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+    username = request.form["username"]
+    plain_text_password = request.form["plain_text_password"]
+    if repositories.username_exist(username):
+        hashed_password = repositories.get_hashed_password(username)
+        if controller.verify_password(plain_text_password, hashed_password):
+            session['username'] = username
+            return redirect("/")
+    error_message = 'Invalid Username and/or Password!'
+    return render_template("login.html", error_message=error_message)
+
+
 
 
 
