@@ -327,3 +327,25 @@ def get_hashed_password(cursor, username):
     return hashed_password['password_hash']
 
 
+@database_common.connection_handler
+def get_all_users_attributes(cursor):
+
+    cursor.execute(""" 
+        SELECT * FROM users
+        ORDER BY username
+        """)
+    users = cursor.fetchall()
+
+    return users
+
+@database_common.connection_handler
+def get_one_user_attributes(cursor, username):
+    cursor.execute("""
+        SELECT * FROM users
+        WHERE username = %(username)s
+        """, {'username': username})
+    user = cursor.fetchone()
+
+    return user
+
+

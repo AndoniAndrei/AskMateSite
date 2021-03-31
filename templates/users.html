@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<div id="users_table">
+        <table>
+            {% for row in users %}
+                <tr>
+                    <td><a href="{{ url_for('user_page', username=row['username']) }}">{{ row['username'] }}</a></td>
+                    <td>{{ row['reputation'] }}<br>Reputation</td>
+                    <td>{{ row['date_of_registration'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from flask import Flask, url_for, render_template, request, redirect, session
-import repositories, controller
+import repositories
+import controller
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,6 +19,7 @@ def home():
 
 @app.route("/list")
 def question_list():
+    username = session['username'] if 'username' in session else None
     order_by = "submission_time"
     direction = "DESC"
     if "order_by" in request.args and "direction" in request.args:
@@ -30,16 +32,18 @@ def question_list():
         questions=questions,
         order_by=order_by,
         direction=direction,
+        username=username
     )
 
 
 @app.route("/question/<question_id>")
 def display_question_by_id(question_id):
+    username = session['username'] if 'username' in session else None
     question = repositories.get_data_by_question_id("question", question_id)[0]
     answers = repositories.get_data_by_question_id("answer", question_id)
     comments = repositories.get_comments()
     tags = repositories.get_question_tags(question_id)
-    return render_template("display_question.html", question=question, answers=answers, comments=comments, tags=tags)
+    return render_template("display_question.html",username=username, question=question, answers=answers, comments=comments, tags=tags)
 
 
 @app.route("/search/<search_phrase>", methods=["POST", "GET"])
@@ -49,9 +53,9 @@ def search(search_phrase):
     return render_template("search.html", found_data=found_data, search_phrase=search_phrase)
 
 
-
 @app.route("/add-question", methods=["GET", "POST"])
 def add_question():
+    username = session['username'] if 'username' in session else None
     if request.method == "POST":
         title = request.form["title"]
         message = request.form["message"]
@@ -61,12 +65,13 @@ def add_question():
             image = None
         repositories.add_new_question(title, message, image)
         return redirect(url_for("question_list"))
-    return render_template("add_question.html")
+    return render_template("add_question.html", username=username)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST"])
 def add_answer(question_id):
     if request.method == "POST":
+
         message = request.form["message"]
         image = ""
         repositories.add_new_answer(message, image, question_id)
@@ -150,6 +155,7 @@ def edit_answer(question_id, answer_id):
         return redirect(url_for("display_question_by_id", question_id=question_id))
     return render_template("answer_form.html")
 
+
 @app.route("/comment/<question_id>/<comment_id>", methods=["GET", "POST"])
 def edit_comment(question_id, comment_id):
     if request.method == "POST":
@@ -158,15 +164,17 @@ def edit_comment(question_id, comment_id):
         return redirect(url_for("display_question_by_id", question_id=question_id))
     return render_template("comment_form.html")
 
+
 @app.route("/comments/<comment_id>/<question_id>/delete")
 def delete_question_comment(comment_id, question_id):
     repositories.delete_data(comment_id, "comment")
     return redirect(url_for("display_question_by_id", question_id=question_id))
 
+
 @app.route("/comments/<comment_id>/<question_id>/<answer_id>/delete")
-def delete_answer_comment(comment_id,question_id, answer_id):
+def delete_answer_comment(comment_id, question_id, answer_id):
     repositories.delete_data(comment_id, "comment")
-    return redirect(url_for("display_question_by_id",question_id=question_id, answer_id=answer_id))
+    return redirect(url_for("display_question_by_id", question_id=question_id, answer_id=answer_id))
 
 
 @app.route("/question/<question_id>/new-tag", methods=["POST"])
@@ -179,8 +187,6 @@ def add_tag(question_id):
 
     question = repositories.get_data_by_question_id("question", question_id)[0]
     return render_template("tag.html", question=question)
-
-
 
 
 @app.route("/question/<question_id>/tag/<tag_id>/delete")
@@ -207,13 +213,14 @@ def user_registration():
     return redirect("/")
 
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
+
     username = request.form["username"]
     plain_text_password = request.form["plain_text_password"]
+
     if repositories.username_exist(username):
         hashed_password = repositories.get_hashed_password(username)
         if controller.verify_password(plain_text_password, hashed_password):
@@ -223,8 +230,22 @@ def login():
     return render_template("login.html", error_message=error_message)
 
 
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect('/')
 
 
+@app.route('/users')
+def users():
+    username = session['username'] if 'username' in session else None
+    users = repositories.get_all_users_attributes()
+    return render_template('users.html', users=users, username=username)
+
+
+@app.route('/user_page/<username>')
+def user_page(username):
+    questions = repositories.get
 
 if __name__ == "__main__":
     app.run(port=4000, debug=True)
