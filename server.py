@@ -189,23 +189,9 @@ def delete_tag(question_id, tag_id):
     return redirect(url_for("display_question_by_id", question_id=question_id, tag_id=tag_id))
 
 
-# @app.route("/ajaxlivesearch",methods=["POST","GET"])
-# def fancy_search():
-#     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#     if request.method == 'POST':
-#         search_word = request.form['query']
-#         print(search_word)
-#         if search_word == '':
-#             query = "SELECT * from employee ORDER BY id"
-#             cur.execute(query)
-#             employee = cur.fetchall()
-#         else:
-#             query = "SELECT * from employee WHERE name LIKE '%{}%' OR email LIKE '%{}%' OR phone LIKE '%{}%' ORDER BY id DESC LIMIT 20".format(search_word,search_word,search_word)
-#             cur.execute(query)
-#             numrows = int(cur.rowcount)
-#             employee = cur.fetchall()
-#             print(numrows)
-#     return jsonify({'htmlresponse': render_template('response.html', employee=employee, numrows=numrows)})
+@app.route("/registration")
+def user_registration():
+
 
 
 if __name__ == "__main__":

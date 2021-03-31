@@ -195,21 +195,15 @@ def add_comment_answer(cursor, answer_id, message):
         )
 
 
-# @database_common.connection_handler
-# def search(cursor, search_phrase):
-#     cursor.execute(f"""
-#     SELECT * FROM question
-#     WHERE message LIKE %(search_phrase)s OR title LIKE %(search_phrase)s
-#     """, {
-#         "search_phrase": f"%{search_phrase}%"
-#     })
-#     # cursor.execute(f"""
-#     # SELECT * FROM answer
-#     # WHERE message LIKE %(search_phrase)s
-#     # """,    {
-#     #     "search_phrase" : f"%{search_phrase}%"
-#     # })
-#     return cursor.fetchall()
+
+@database_common.connection_handler
+def create_user_registration(cursor):
+    cursor.execute(f"""
+    CREATE TABLE user_registration ( 
+    """)
+
+
+
 @database_common.connection_handler
 def search(cursor, search_phrase):
     cursor.execute(f"""
