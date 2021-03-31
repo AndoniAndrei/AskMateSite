@@ -41,6 +41,7 @@ def get_comments(cursor):
     """)
     return cursor.fetchall()
 
+
 @database_common.connection_handler
 def get_data_by_answer_id(cursor, table, data_id):
     column = "id"
@@ -127,14 +128,15 @@ def edit_question(cursor, table, item_id, title, message, image):
         {"message": message, "title": title, "image": image, "id": item_id},
     )
 
+
 @database_common.connection_handler
 def edit_answer(cursor, answer_id, message):
     cursor.execute(f"""
     UPDATE answer SET message = %(message)s
     WHERE id = %(id)s
         """,
-                   {"id" : answer_id, "message" : message}
-    )
+                   {"id": answer_id, "message": message}
+                   )
 
 
 @database_common.connection_handler
@@ -157,7 +159,7 @@ def register_question_vote(cursor, question_id, vote):
 
 
 @database_common.connection_handler
-def register_answer_vote(cursor, answer_id,question_id, vote):
+def register_answer_vote(cursor, answer_id, question_id, vote):
     cursor.execute("""
                    UPDATE answer SET vote_number = vote_number + %(vote)s
                    WHERE id= %(answer_id)s and question_id = %(question_id)s
@@ -177,7 +179,7 @@ def add_comment_question(cursor, question_id, message):
             "message": message,
             "question_id": question_id,
         },
-        )
+    )
 
 
 @database_common.connection_handler
@@ -189,11 +191,10 @@ def add_comment_answer(cursor, answer_id, message):
     VALUES (%(answer_id)s, %(message)s, %(submission_time)s)""",
         {
             "submission_time": submission_time,
-            "answer_id" : answer_id,
-            "message" : message
+            "answer_id": answer_id,
+            "message": message
         }
-        )
-
+    )
 
 
 @database_common.connection_handler
@@ -203,9 +204,9 @@ def create_user_registration(cursor, username, password_hash):
     INSERT INTO users(username, password_hash, date_of_registration, reputation) 
     VALUES (%(username)s, %(password_hash)s, %(date_of_registration)s, 0)
       """, {
-        'username' : username,
-        'password_hash' : password_hash,
-        'date_of_registration' : date_of_registration,
+        'username': username,
+        'password_hash': password_hash,
+        'date_of_registration': date_of_registration,
 
     })
     return
@@ -216,8 +217,9 @@ def username_exist(cursor, username):
     cursor.execute("""
     SELECT username from users
     """)
-    list_of_all_users = [user['username']for user in cursor.fetchall()]
+    list_of_all_users = [user['username'] for user in cursor.fetchall()]
     return username in list_of_all_users
+
 
 @database_common.connection_handler
 def search(cursor, search_phrase):
@@ -235,8 +237,8 @@ def search_answer(cursor, search_phrase):
     cursor.execute(f"""
     SELECT * FROM answer
     WHERE message LIKE %(search_phrase)s
-    """,    {
-        "search_phrase" : f"%{search_phrase}%"
+    """, {
+        "search_phrase": f"%{search_phrase}%"
     })
     return cursor.fetchall()
 
@@ -251,7 +253,6 @@ def get_last_5_questions(cursor):
     """,
     )
     return cursor.fetchall()
-
 
 
 @database_common.connection_handler
@@ -275,18 +276,17 @@ def add_tag(cursor, tag):
     return tag_id['id']
 
 
-
-
 @database_common.connection_handler
 def update_question_tag_table(cursor, question_id, tag_id):
     cursor.execute(f"""
     INSERT INTO question_tag(question_id, tag_id)
     VALUES (%(question_id)s, %(tag_id)s)
     """,
-        {
-            "question_id" : question_id,
-            "tag_id" : tag_id
-        })
+                   {
+                       "question_id": question_id,
+                       "tag_id": tag_id
+                   })
+
 
 @database_common.connection_handler
 def get_question_tags(cursor, question_id):
@@ -300,7 +300,7 @@ def get_question_tags(cursor, question_id):
     values = {
         "id": question_id
     }
-    cursor.execute(query,values)
+    cursor.execute(query, values)
     ids = cursor.fetchall()
 
     query1 = """
@@ -322,14 +322,13 @@ def get_hashed_password(cursor, username):
     cursor.execute(""" 
             SELECT password_hash FROM users
             WHERE username = %(username)s
-            """, {'username':username})
+            """, {'username': username})
     hashed_password = cursor.fetchone()
     return hashed_password['password_hash']
 
 
 @database_common.connection_handler
 def get_all_users_attributes(cursor):
-
     cursor.execute(""" 
         SELECT * FROM users
         ORDER BY username
@@ -337,6 +336,7 @@ def get_all_users_attributes(cursor):
     users = cursor.fetchall()
 
     return users
+
 
 @database_common.connection_handler
 def get_one_user_attributes(cursor, username):
@@ -349,7 +349,6 @@ def get_one_user_attributes(cursor, username):
     return user
 
 
-
 @database_common.connection_handler
 def get_data_by_username(cursor, table, username):
     cursor.execute(
@@ -357,7 +356,27 @@ def get_data_by_username(cursor, table, username):
       SELECT * FROM {table}
       WHERE 'username' = %(username)s;
       """,
-        {"username": username},
+        {"username": username}
     )
     data = cursor.fetchall()
     return data
+
+
+@database_common.connection_handler
+def update_question_view(cursor, question_id):
+    cursor.execute(f"""
+    UPDATE question
+    SET view_number = view_number + 1
+                        WHERE id = %(question_id)s
+    """,
+                   {"question_id": question_id}
+                   )
+
+
+
+
+# cursor.execute("""
+#                    UPDATE answer SET vote_number = vote_number + %(vote)s
+#                    WHERE id= %(answer_id)s and question_id = %(question_id)s
+#                    """,
+#                    {"answer_id": answer_id, "question_id": question_id, "vote": vote})

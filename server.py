@@ -1,6 +1,6 @@
 from flask import Flask, url_for, render_template, request, redirect, session
-from pip._vendor.requests import Session
 
+import os
 import repositories
 import controller
 from dotenv import load_dotenv
@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = '$2b$12$yxO3U5wrC1QSvVfL3xrLbu'
+
+
 # app.config['SESSION_TYPE'] = 'memcached'
 # app.config['SECRET_KEY'] = 'super secret key'
 # sess = Session()
@@ -48,6 +51,8 @@ def display_question_by_id(question_id):
     answers = repositories.get_data_by_question_id("answer", question_id)
     comments = repositories.get_comments()
     tags = repositories.get_question_tags(question_id)
+    question["view_number"] = int(question["view_number"]) + 1
+    repositories.update_question_view(question_id)
     return render_template("display_question.html",username=username, question=question, answers=answers, comments=comments, tags=tags)
 
 
@@ -256,9 +261,14 @@ def user_page(username):
     comment = repositories.get_data_by_username('comment', username)
     return render_template('user_page.html', user_attributes=user_attributes, questions=questions, answers=answers, comment=comment)
 
-
+# @app.route('/question/<question_id>')
+# def question_view_count(question_id):
+#     repositories.count_question_view(question_id)
+#     return redirect("/question/" + question_id)
+#
 
 if __name__ == "__main__":
+    # SECRET_KEY = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
     # app.secret_key = 'super secret key'
     # app.config['SESSION_TYPE'] = 'filesystem'
     #
