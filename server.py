@@ -1,4 +1,6 @@
 from flask import Flask, url_for, render_template, request, redirect, session
+from pip._vendor.requests import Session
+
 import repositories
 import controller
 from dotenv import load_dotenv
@@ -6,6 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+# app.config['SESSION_TYPE'] = 'memcached'
+# app.config['SECRET_KEY'] = 'super secret key'
+# sess = Session()
 
 
 @app.route("/")
@@ -245,7 +250,17 @@ def users():
 
 @app.route('/user_page/<username>')
 def user_page(username):
-    questions = repositories.get
+    user_attributes = repositories.get_one_user_attributes
+    questions = repositories.get_data_by_username('question', username)
+    answers = repositories.get_data_by_username('answer', username)
+    comment = repositories.get_data_by_username('comment', username)
+    return render_template('user_page.html', user_attributes=user_attributes, questions=questions, answers=answers, comment=comment)
+
+
 
 if __name__ == "__main__":
+    # app.secret_key = 'super secret key'
+    # app.config['SESSION_TYPE'] = 'filesystem'
+    #
+    # sess.init_app(app)
     app.run(port=4000, debug=True)

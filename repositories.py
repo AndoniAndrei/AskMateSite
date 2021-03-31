@@ -349,3 +349,15 @@ def get_one_user_attributes(cursor, username):
     return user
 
 
+
+@database_common.connection_handler
+def get_data_by_username(cursor, table, username):
+    cursor.execute(
+        f"""
+      SELECT * FROM {table}
+      WHERE 'username' = %(username)s;
+      """,
+        {"username": username},
+    )
+    data = cursor.fetchall()
+    return data
