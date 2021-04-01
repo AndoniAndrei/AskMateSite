@@ -57,6 +57,7 @@ def search(search_phrase):
 
 
 @app.route("/add-question", methods=["GET", "POST"])
+@controller.login_required
 def add_question():
     username = session['username'] if 'username' in session else None
     if request.method == "POST":
@@ -72,6 +73,7 @@ def add_question():
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST"])
+@controller.login_required
 def add_answer(question_id):
     username = session['username'] if 'username' in session else None
     if request.method == "POST":
@@ -86,18 +88,21 @@ def add_answer(question_id):
 
 
 @app.route("/question/<question_id>/delete")
+@controller.login_required
 def delete_question(question_id):
     repositories.delete_data(question_id, "question")
     return redirect(url_for("question_list"))
 
 
 @app.route("/<question_id>/<answer_id>/delete")
+@controller.login_required
 def delete_answer(answer_id, question_id):
     repositories.delete_data(answer_id, "answer")
     return redirect(url_for("display_question_by_id", question_id=question_id))
 
 
 @app.route("/question/<question_id>/edit_a_question", methods=["POST"])
+@controller.login_required
 def edit_question(question_id):
     title = request.form["title"]
     message = request.form["message"]
@@ -107,30 +112,40 @@ def edit_question(question_id):
 
 
 @app.route("/question/<question_id>/vote_up", methods=["POST"])
+@controller.login_required
 def vote_up_question(question_id):
-    repositories.register_question_vote(question_id=question_id, vote=1)
+    username = session['username'] if 'username' in session else None
+    repositories.register_question_vote_and_reputation(question_id=question_id, vote=1, username=username)
+
     return redirect(url_for("question_list"))
 
 
 @app.route("/question/<question_id>/vote_down_question", methods=["POST"])
+@controller.login_required
 def vote_down_question(question_id):
-    repositories.register_question_vote(question_id=question_id, vote=-1)
+    username = session['username'] if 'username' in session else None
+    repositories.register_question_vote_and_reputation(question_id=question_id, vote=-1, username=username)
     return redirect(url_for("question_list"))
 
 
 @app.route("/question/<question_id>/<answer_id>/vote_up_answer", methods=["POST"])
+@controller.login_required
 def vote_up_answer(answer_id, question_id):
-    repositories.register_answer_vote(answer_id, question_id, vote=1)
+    username = session['username'] if 'username' in session else None
+    repositories.register_answer_vote_and_reputation(answer_id, question_id, vote=1, username=username)
     return redirect(url_for("display_question_by_id", question_id=question_id))
 
 
 @app.route("/question/<question_id>/<answer_id>/vote_down_answer", methods=["POST"])
+@controller.login_required
 def vote_down_answer(answer_id, question_id):
-    repositories.register_answer_vote(answer_id, question_id, vote=-1)
+    username = session['username'] if 'username' in session else None
+    repositories.register_answer_vote_and_reputation(answer_id, question_id, vote=-1, username=username)
     return redirect(url_for("display_question_by_id", question_id=question_id))
 
 
 @app.route("/question/<question_id>/new_comment", methods=["POST"])
+@controller.login_required
 def add_comment_to_question(question_id):
     username = session['username'] if 'username' in session else None
     if request.method == "POST":
@@ -142,6 +157,7 @@ def add_comment_to_question(question_id):
 
 
 @app.route("/answer/<question_id>/<answer_id>/new_comment", methods=["POST"])
+@controller.login_required
 def add_comment_to_answer(question_id, answer_id, username):
     if request.method == "POST":
         message = request.form["message"]
@@ -152,6 +168,7 @@ def add_comment_to_answer(question_id, answer_id, username):
 
 
 @app.route("/answer/<question_id>/<answer_id>/edit_answer", methods=["GET", "POST"])
+@controller.login_required
 def edit_answer(question_id, answer_id, username):
     if request.method == "POST":
         message = request.form["message"]
@@ -162,6 +179,7 @@ def edit_answer(question_id, answer_id, username):
 
 
 @app.route("/comment/<question_id>/<comment_id>", methods=["GET", "POST"])
+@controller.login_required
 def edit_comment(question_id, comment_id):
     if request.method == "POST":
         message = request["message"]
@@ -171,18 +189,21 @@ def edit_comment(question_id, comment_id):
 
 
 @app.route("/comments/<comment_id>/<question_id>/delete")
+@controller.login_required
 def delete_question_comment(comment_id, question_id):
     repositories.delete_data(comment_id, "comment")
     return redirect(url_for("display_question_by_id", question_id=question_id))
 
 
 @app.route("/comments/<comment_id>/<question_id>/<answer_id>/delete")
+@controller.login_required
 def delete_answer_comment(comment_id, question_id, answer_id):
     repositories.delete_data(comment_id, "comment")
     return redirect(url_for("display_question_by_id", question_id=question_id, answer_id=answer_id))
 
 
 @app.route("/question/<question_id>/new-tag", methods=["POST"])
+@controller.login_required
 def add_tag(question_id):
     if request.method == "POST":
         name = request.form["name"]
@@ -195,6 +216,7 @@ def add_tag(question_id):
 
 
 @app.route("/question/<question_id>/tag/<tag_id>/delete")
+@controller.login_required
 def delete_tag(question_id, tag_id):
     repositories.delete_data(tag_id, "tag")
     return redirect(url_for("display_question_by_id", question_id=question_id, tag_id=tag_id))

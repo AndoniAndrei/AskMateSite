@@ -1,4 +1,7 @@
+from functools import wraps
+
 import bcrypt
+from flask import session, redirect, url_for
 from datetime import datetime
 
 
@@ -15,3 +18,13 @@ def hash_password(plain_text_password):
 def verify_password(plain_text_password, hashed_password):
     hashed_bytes_password = hashed_password.encode('utf-8')
     return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
+
+
+def login_required(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        if 'username' in session:
+            return function(*args, **kwargs)
+        else:
+            return redirect(url_for('login'))
+    return wrapper

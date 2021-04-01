@@ -146,22 +146,7 @@ def edit_comment(cursor, comment_id, message, username):
             """, {"id": comment_id, "message": message, "username": username})
 
 
-@database_common.connection_handler
-def register_question_vote(cursor, question_id, vote):
-    cursor.execute("""
-                   UPDATE question SET vote_number = vote_number + %(vote)s
-                   WHERE id= %(question_id)s
-                   """,
-                   {"question_id": question_id, "vote": vote})
 
-
-@database_common.connection_handler
-def register_answer_vote(cursor, answer_id, question_id, vote):
-    cursor.execute("""
-                   UPDATE answer SET vote_number = vote_number + %(vote)s
-                   WHERE id= %(answer_id)s and question_id = %(question_id)s
-                   """,
-                   {"answer_id": answer_id, "question_id": question_id, "vote": vote})
 
 
 @database_common.connection_handler
@@ -379,3 +364,53 @@ def bind_question_to_user(cursor, question_id, user):
     cursor.execute(f"""
     SELECT username from question
     WHERE question_id = %(question_id)s """)
+
+
+@database_common.connection_handler
+def register_question_vote_and_reputation(cursor, question_id, vote, username):
+    cursor.execute("""
+                   UPDATE question SET vote_number = vote_number + %(vote)s
+                   WHERE id= %(question_id)s
+                   """,
+                   {"question_id": question_id, "vote": vote})
+
+    reputation = vote
+    if vote == -1:
+        reputation = -2
+    elif vote == 1:
+        reputation = 5
+
+    cursor.execute("""
+            UPDATE users
+            SET reputation = 
+            (SELECT reputation 
+            FROM users 
+            WHERE username = %(username)s) + %(reputation)s
+            WHERE username = %(username)s
+
+            """, {'username': username, 'reputation': reputation})
+
+
+@database_common.connection_handler
+def register_answer_vote_and_reputation(cursor, answer_id, question_id, vote, username):
+    cursor.execute("""
+                   UPDATE answer SET vote_number = vote_number + %(vote)s
+                   WHERE id= %(answer_id)s and question_id = %(question_id)s
+                   """,
+                   {"answer_id": answer_id, "question_id": question_id, "vote": vote})
+
+    reputation = vote
+    if vote == -1:
+        reputation = -2
+    elif vote == 1:
+        reputation = 10
+
+    cursor.execute("""
+            UPDATE users
+            SET reputation = 
+            (SELECT reputation 
+            FROM users 
+            WHERE username = %(username)s) + %(reputation)s
+            WHERE username = %(username)s
+
+            """, {'username': username, 'reputation': reputation})
