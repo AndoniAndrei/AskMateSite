@@ -91,25 +91,28 @@ def add_answer(question_id):
 @app.route("/question/<question_id>/delete")
 @controller.login_required
 def delete_question(question_id):
+    username = session['username'] if 'username' in session else None
     repositories.delete_data(question_id, "question")
-    return redirect(url_for("question_list"))
+    return redirect(url_for("question_list", username=username))
 
 
 @app.route("/<question_id>/<answer_id>/delete")
 @controller.login_required
 def delete_answer(answer_id, question_id):
+    username = session['username'] if 'username' in session else None
     repositories.delete_data(answer_id, "answer")
-    return redirect(url_for("display_question_by_id", question_id=question_id))
+    return redirect(url_for("display_question_by_id", question_id=question_id, username=username))
 
 
 @app.route("/question/<question_id>/edit_a_question", methods=["POST"])
 @controller.login_required
 def edit_question(question_id):
+    username = session['username'] if 'username' in session else None
     title = request.form["title"]
     message = request.form["message"]
     image = request.form["image"]
-    repositories.edit_question("question", question_id, title, message, image)
-    return redirect(url_for("display_question_by_id", question_id=question_id))
+    repositories.edit_question("question", question_id, title, message, image, username)
+    return redirect(url_for("display_question_by_id", question_id=question_id, username=username))
 
 
 @app.route("/question/<question_id>/vote_up", methods=["POST"])
@@ -171,23 +174,25 @@ def add_comment_to_answer(question_id, answer_id):
 
 @app.route("/answer/<question_id>/<answer_id>/edit_answer", methods=["GET", "POST"])
 @controller.login_required
-def edit_answer(question_id, answer_id, username):
+def edit_answer(question_id, answer_id):
+    username = session['username'] if 'username' in session else None
     if request.method == "POST":
         message = request.form["message"]
         # image = request.form["image"]
         repositories.edit_answer(answer_id, message, username)
         return redirect(url_for("display_question_by_id", question_id=question_id))
-    return render_template("answer_form.html")
+    return render_template("answer_form.html", username=username)
 
 
 @app.route("/comment/<question_id>/<comment_id>", methods=["GET", "POST"])
 @controller.login_required
 def edit_comment(question_id, comment_id):
+    username = session['username'] if 'username' in session else None
     if request.method == "POST":
-        message = request["message"]
-        repositories.edit_comment(comment_id, message)
-        return redirect(url_for("display_question_by_id", question_id=question_id))
-    return render_template("comment_form.html")
+        message = request.form["message"]
+        repositories.edit_comment(comment_id, message, username)
+        return redirect(url_for("display_question_by_id", question_id=question_id, username=username))
+    return render_template("comment_form.html", username=username)
 
 
 @app.route("/comments/<comment_id>/<question_id>/delete")
