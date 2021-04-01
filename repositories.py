@@ -417,18 +417,26 @@ def register_answer_vote_and_reputation(cursor, answer_id, question_id, vote, us
 
 
 @database_common.connection_handler
-def accept_answer_true(cursor, answer_id):
+def toggle_answer_acceptance(cursor, username, answer_id):
     cursor.execute("""
+        SELECT accepted FROM answer
+        WHERE id = %(answer_id)s
+        """, {'answer_id': answer_id})
+    answer = cursor.fetchone()
+    state = answer['accepted']
+    if state:
+        state = 'FALSE'
+    else:
+        state = 'TRUE'
+
+    cursor.execute(f"""
         UPDATE answer 
-        SET accepted = TRUE
+        SET accepted = {state} 
         WHERE id = %(answer_id)s;
         UPDATE users
         SET reputation = reputation + 15
-        WHERE users.username in
-            (SELECT answer.username
-             FROM answer
-             WHERE answer.id = %(answer_id)s )
-        """, {'answer_id': answer_id}
+        WHERE users.username = %(username)s
+        """, {'username': username, 'answer_id': answer_id}
         )
     return True
 

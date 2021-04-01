@@ -279,18 +279,17 @@ def user_page(username):
     comment = repositories.get_data_by_username('comment', username)
     return render_template('user_page.html', user_attributes=user_attributes, questions=questions, answers=answers, comment=comment)
 
-
 @app.route('/<question_id>/<answer_id>/accept_answer')
 def accept_answer(question_id, answer_id):
-    question = repositories.get_data_by_question_id('question',question_id)[0]
-    if question['username'] != session['username']:
+    username = session.get('username')
+    question = repositories.get_data_by_question_id('question', question_id)[0]
+
+    if question['username'] != username:
         return 'You are not allowed to accept this answer'
     else:
-        accepted = repositories.accept_answer_true(answer_id)
-        username = session['username'] if 'username' in session else None
+        repositories.toggle_answer_acceptance(username, answer_id)
         repositories.register_question_vote_and_reputation(answer_id, 15, username)
-        if accepted:
-            repositories.accept_answer_false(answer_id)
+
     return redirect(url_for('display_question_by_id', question_id=question_id))
 
 
