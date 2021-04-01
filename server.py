@@ -1,8 +1,9 @@
 from flask import Flask, url_for, render_template, request, redirect, session
+
+import login_service
 import repositories
 import controller
 from dotenv import load_dotenv
-
 
 load_dotenv()
 app = Flask(__name__)
@@ -46,7 +47,8 @@ def display_question_by_id(question_id):
     tags = repositories.get_question_tags(question_id)
     question["view_number"] = int(question["view_number"]) + 1
     repositories.update_question_view(question_id)
-    return render_template("display_question.html", username=username, question=question, answers=answers, comments=comments, tags=tags)
+    return render_template("display_question.html", username=username, question=question, answers=answers,
+                           comments=comments, tags=tags)
 
 
 @app.route("/search/<search_phrase>", methods=["POST", "GET"])
@@ -77,7 +79,6 @@ def add_question():
 def add_answer(question_id):
     username = session['username'] if 'username' in session else None
     if request.method == "POST":
-
         message = request.form["message"]
         image = ""
         repositories.add_new_answer(message, image, question_id, username)
@@ -237,6 +238,7 @@ def user_registration():
         return render_template("register.html", error_message=error_message)
     password_hash = controller.hash_password(password)
     repositories.create_user_registration(username, password_hash)
+    login_service.login(username, password)
     return redirect("/")
 
 
@@ -248,13 +250,11 @@ def login():
     username = request.form["username"]
     plain_text_password = request.form["plain_text_password"]
 
-    if repositories.username_exist(username):
-        hashed_password = repositories.get_hashed_password(username)
-        if controller.verify_password(plain_text_password, hashed_password):
-            session['username'] = username
-            return redirect("/")
-    error_message = 'Invalid Username and/or Password!'
-    return render_template("login.html", error_message=error_message)
+    try:
+        login_service.login(username, plain_text_password)
+        return redirect("/")
+    except EnvironmentError as error_message:
+        return render_template("login.html", error_message=error_message)
 
 
 @app.route('/logout')
@@ -277,7 +277,9 @@ def user_page(username):
     print(questions)
     answers = repositories.get_data_by_username('answer', username)
     comment = repositories.get_data_by_username('comment', username)
-    return render_template('user_page.html', user_attributes=user_attributes, questions=questions, answers=answers, comment=comment)
+    return render_template('user_page.html', user_attributes=user_attributes, questions=questions, answers=answers,
+                           comment=comment)
+
 
 @app.route('/<question_id>/<answer_id>/accept_answer')
 def accept_answer(question_id, answer_id):

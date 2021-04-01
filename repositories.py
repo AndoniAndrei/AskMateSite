@@ -440,21 +440,6 @@ def toggle_answer_acceptance(cursor, username, answer_id):
         )
     return True
 
-@database_common.connection_handler
-def accept_answer_false(cursor, answer_id):
-    cursor.execute("""
-        UPDATE answer 
-        SET accepted = FALSE
-        WHERE id = %(answer_id)s;
-        UPDATE users
-        SET reputation = reputation - 15
-        WHERE users.username in
-            (SELECT answer.username
-             FROM answer
-             WHERE answer.id = %(answer_id)s )
-        """, {'answer_id': answer_id}
-                   )
-    return False
 
 @database_common.connection_handler
 def get_all_tags(cursor, tag_id):

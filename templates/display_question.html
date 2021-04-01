@@ -124,55 +124,52 @@
 <ul class="tilesWrap">
 
     {% for answer in answers %}
-        <li><h3>Check out this answer:</h3>
+        <li>
+            <h3>Check out this answer:</h3>
             <p>
                 > {{ answer["message"] }}
             </p>
-            <button>
-                <a
-                        href="{{ url_for('delete_answer', answer_id=answer.id, question_id=answer.question_id) }}"
-                >
+            {% if username == answer.username %}
+                <button>
+                    <a href="{{ url_for('delete_answer', answer_id=answer.id, question_id=answer.question_id) }}">
+                        Delete Answer
+                    </a>
+                </button>
 
-                    Delete Answer
-                </a>
-            </button>
-
-            <br/>
-            <ul class="tilesWrap">
+                <br/>
                 <button>
                     <a href="{{ url_for("edit_answer", question_id=answer.question_id, answer_id=answer.id) }}">
                         Edit Answer
                     </a>
 
                     <a href="{{ url_for("accept_answer", question_id=answer.question_id, answer_id=answer.id) }}">
-                        Accept Answer
+                        {% if answer.accepted == True %}
+                            Reject Answer
+                        {% else %}
+                            Accept Answer
+                        {% endif %}
                     </a>
+
                 </button>
-                {#                {% import 'answer_form.html' as answer_form %}#}
-                {#                {{ answer_form.render(#}
-                {#            question_url=url_for('edit_answer', question_id=question.id, answer_id=answer.id),#}
-                {#            message=question.message,#}
-                {#            image=question.image#}
-                {#        ) }}#}
-                <br>
-                <h3>Check out the comments bellow :))</h3>
-                <br>
-                {% for comment in comments %}
-                    {% if answer.id == comment.answer_id %}
-                        <p>
-                            > {{ comment["message"] }}
-                        </p>
-                        <button>
-                            <a href="{{ url_for("edit_comment", question_id=question.id, comment_id=comment.id) }}">
-                                Edit Comment
-                            </a>
-                            <a href="{{ url_for("delete_answer_comment", question_id=question.id,answer_id=answer.id, comment_id=comment.id) }}">
-                                Delete Comment
-                            </a>
-                        </button>
-                    {% endif %}
-                {% endfor %}
-            </ul>
+            {% endif %}
+            <br>
+            <h3>Check out the comments bellow :))</h3>
+            <br>
+            {% for comment in comments %}
+                {% if answer.id == comment.answer_id %}
+                    <p>
+                        > {{ comment["message"] }}
+                    </p>
+                    <button>
+                        <a href="{{ url_for("edit_comment", question_id=question.id, comment_id=comment.id) }}">
+                            Edit Comment
+                        </a>
+                        <a href="{{ url_for("delete_answer_comment", question_id=question.id,answer_id=answer.id, comment_id=comment.id) }}">
+                            Delete Comment
+                        </a>
+                    </button>
+                {% endif %}
+            {% endfor %}
             <br/>
             <p>
                 This answer has a score of {{ answer["vote_number"] }}. You can
@@ -209,16 +206,17 @@
 
         </li>
     {% endfor %}
-    <br>
-    <form class="form"
-          method="POST"
-          action="{{ url_for('add_answer', question_id=question.id) }}"
-    >
-        <label for="message"> Answer Message: </label>&nbsp;
-        <input type="text" id="message" name="message"/><br/>
-        <button type="submit">Submit Answer</button>
-    </form>
 </ul>
+
+<br>
+<form class="form"
+      method="POST"
+      action="{{ url_for('add_answer', question_id=question.id) }}"
+>
+    <label for="message"> Answer Message: </label>&nbsp;
+    <input type="text" id="message" name="message"/><br/>
+    <button type="submit">Submit Answer</button>
+</form>
 
 
 <a class="myButton" href="{{ url_for('delete_question', question_id=question.id) }}">
