@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="../static/style.css">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body class="body">
-<br>
-<h4>Please add a new comment</h4>
-<br>
-{% import "comment_form.html" as comment_form %}
-{{ comment_form.render(comment_url = url_for("add_comment_to_question", question_id=question["id"])) }}
-</body>
-</html>
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <link rel="stylesheet" href="../static/style.css">#}
+{#    <meta charset="UTF-8">#}
+{#    <title></title>#}
+{#</head>#}
+{#<body class="body">#}
+{#<br>#}
+{#<h4>Please add a new comment</h4>#}
+{#<br>#}
+{#{% import "comment_form.html" as comment_form %}#}
+{#{{ comment_form.render(comment_url = url_for("add_comment_to_question", question_id=question["id"])) }}#}
+{#</body>#}
+{#</html>#}
