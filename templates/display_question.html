@@ -13,6 +13,7 @@
     Go Back to the question list
 </a>
 <br>
+</a>
 <br>
 <div class="panel-wrapper">
     <a href="#show" class="show btn" id="show">Edit this question!</a>
@@ -139,6 +140,10 @@ Delete Tag
                 <button>
                     <a href="{{ url_for("edit_answer", question_id=answer.question_id, answer_id=answer.id) }}">
                         Edit Answer
+                    </a>
+
+                    <a href="{{ url_for("accept_answer", question_id=answer.question_id, answer_id=answer.id) }}">
+                        Accept Answer
                     </a>
                 </button>
                 {#                {% import 'answer_form.html' as answer_form %}#}

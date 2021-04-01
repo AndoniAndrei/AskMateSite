@@ -55,6 +55,7 @@ CREATE TABLE answer (
     question_id integer,
     message text,
     image text,
+    accepted bool,
     username text
 );
 

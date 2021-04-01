@@ -414,3 +414,28 @@ def register_answer_vote_and_reputation(cursor, answer_id, question_id, vote, us
             WHERE username = %(username)s
 
             """, {'username': username, 'reputation': reputation})
+
+
+@database_common.connection_handler
+def accept_answer(cursor, answer_id):
+    cursor.execute("""
+        UPDATE answer
+        SET accepted = TRUE
+        WHERE id = %(answer_id)s;
+        UPDATE users
+        SET reputation = reputation + 15
+        WHERE users.username in
+            (SELECT answer.username
+             FROM answer
+             WHERE answer.id = %(answer_id)s )
+        """, {'answer_id': answer_id}
+        )
+
+# @database_common.connection_handler
+# def get_accepted_answer(cursor, question_id):
+#     cursor.execute("""
+#         SELECT
+#         """)
+
+
+
