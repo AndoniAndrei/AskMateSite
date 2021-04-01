@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
+{% block title %}AskMate{% endblock %}
+{% block content %}
 <head>
     <link rel="stylesheet" href="../static/style.css">
     <meta charset="UTF-8">
@@ -9,14 +11,14 @@
 <form class="form" action="{{ question_url }}" method="POST" enctype="multipart/form-data">
     <label for="message">Message: </label>
     <textarea id="message" name="message">{{ message }}</textarea>
-{##}
-{#    <label for="image">Add Image URL here:</label>#}
-{#    <input name="image" id="image" type="text" value="{{ image }}"/>#}
+
+    <label for="image">Add Image URL here:</label>
+    <input name="image" id="image" type="text" value="{{ image }}"/>
 
     <button type="submit">Save</button>
 </form>
 </body>
-</html>
+{% endblock %}
 
 
-{#{% endmacro %}#}
+{% endmacro %}
