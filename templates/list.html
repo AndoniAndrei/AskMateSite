@@ -1,104 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-{#    <link rel="stylesheet" href="../static/style.css">#}
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>List of Questions</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <style>
-        table,
-        th,
-        td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-    </style>
-</head>
-<body class="body">
-<div class="container">
-<a href="{{ url_for("home") }}"> <h1 id="title_style">Ask Mate</h1></a>
-<a class="myButton" href="{{ url_for('add_question') }}">Add a new question</a>
-<br/>
-<form class="form" action="{{ url_for('question_list') }}" method="GET">
-    <label for="order_by">Order by:</label>
-    <select name="order_by" id="order_by">
-        <option value="id">Id</option>
-        <option value="submission_time">Submission Time</option>
-        <option value="view_number">Number of views</option>
-        <option value="vote_number">Number of votes</option>
-        <option value="title">Title</option>
-        <option value="message">Message</option>
-    </select>
-    <label for="direction">Order:</label>
-    <select id="direction" name="direction">
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-    </select>
-    <button type="submit">Apply Order</button>
-</form>
-<br/>
-<div class="container">
-    <table>
-        <thead>
-        <tr>
-            {% for header in "id", "submission_time","view_number",
-                    "vote_number", "title", "message", "image", "vote_up", "vote_down" %}
-                <th>{{ header }}</th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for question in questions %}
-            <tr>
-                <td>{{ question.id }}</td>
-                <td>{{ question.submission_time }}</td>
-                <td>{{ question.view_number }}</td>
-                <td>{{ question.vote_number }}</td>
-                <td>
-                    <strong>
-                        <a
-                                href="{{ url_for('display_question_by_id', question_id=question.id) }}"
-                        >
-                            {{ question.title }}
-                        </a>
-                    </strong>
-                </td>
-                <td>{{ question.message }}</td>
-                <td>
-                    {% if question.image %}
-                        <img
-                                src="{{ question.image }}"
-                                alt=""
-                                width="20"
-                                height="20"
-                        />
-                    {% endif %}
-                </td>
-                <td>
-                    <form
-                            action="{{ url_for('vote_up_question', question_id=question["id"]) }}"
-                            method="POST"
-                    >
-                        <button class="btn btn-primary"  type="submit">Vote Up</button>
-                    </form>
-                </td>
-                <td>
-                    <form
-                            action="{{ url_for('vote_down_question', question_id=question["id"]) }}"
-                            method="POST"
-                    >
-                        <button class="btn btn-primary" type="submit">Vote Down</button>
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <br><br><br>
-</div>
-</div>
-</body>
-</html>
+{% extends "base.html" %}
+{#<head>#}
+{##}
+{#    <meta charset="UTF-8"/>#}
+{#    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>#}
 
+{% block title %}AskMate{% endblock %}
+{% block content %}
+    <title>List of Questions</title>
+    {#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">#}
+    {#    <style>#}
+    {#        table,#}
+    {#        th,#}
+    {#        td {#}
+    {#            border: 1px solid black;#}
+    {#            border-collapse: collapse;#}
+    {#        }#}
+    {#    </style>#}
+    {#</head>#}
+    {#<body >#}
+    <div>
+{#        <a href="{{ url_for("home") }}"><h1 id="title_style">Ask Mate</h1></a>#}
+        <a class="myButton" href="{{ url_for('add_question') }}">Add a new question</a>
+        <br/>
+        <form class="form" action="{{ url_for('question_list') }}" method="GET">
+            <label for="order_by">Order by:</label>
+            <select name="order_by" id="order_by">
+                <option value="id">Id</option>
+                <option value="submission_time">Submission Time</option>
+                <option value="view_number">Number of views</option>
+                <option value="vote_number">Number of votes</option>
+                <option value="title">Title</option>
+                <option value="message">Message</option>
+            </select>
+            <label for="direction">Order:</label>
+            <select id="direction" name="direction">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+            <button type="submit">Apply Order</button>
+        </form>
+        <br/>
+        <div class="container">
+            <table>
+                <thead>
+                <tr>
+                    {% for header in "id", "submission_time","view_number",
+                    "vote_number", "title", "message", "image", "vote_up", "vote_down" %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for question in questions %}
+                    <tr>
+                        <td>{{ question.id }}</td>
+                        <td>{{ question.submission_time }}</td>
+                        <td>{{ question.view_number }}</td>
+                        <td>{{ question.vote_number }}</td>
+                        <td>
+                            <strong>
+                                <a
+                                        href="{{ url_for('display_question_by_id', question_id=question.id) }}"
+                                >
+                                    {{ question.title }}
+                                </a>
+                            </strong>
+                        </td>
+                        <td>{{ question.message }}</td>
+                        <td>
+                            {% if question.image %}
+                                <img
+                                        src="{{ question.image }}"
+                                        alt=""
+                                        width="20"
+                                        height="20"
+                                />
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form
+                                    action="{{ url_for('vote_up_question', question_id=question["id"]) }}"
+                                    method="POST"
+                            >
+                                <button class="btn btn-primary" type="submit">Vote Up</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form
+                                    action="{{ url_for('vote_down_question', question_id=question["id"]) }}"
+                                    method="POST"
+                            >
+                                <button class="btn btn-primary" type="submit">Vote Down</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br><br><br>
+        </div>
+    </div>
+    {#</body>#}
+    {#</html>#}
+    {##}
+{% endblock %}
