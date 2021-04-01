@@ -159,7 +159,8 @@ def add_comment_to_question(question_id):
 
 @app.route("/answer/<question_id>/<answer_id>/new_comment", methods=["POST"])
 @controller.login_required
-def add_comment_to_answer(question_id, answer_id, username):
+def add_comment_to_answer(question_id, answer_id):
+    username = session['username'] if 'username' in session else None
     if request.method == "POST":
         message = request.form["message"]
         repositories.add_comment_answer(answer_id, message, username)

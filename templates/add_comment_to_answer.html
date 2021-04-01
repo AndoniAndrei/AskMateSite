@@ -10,6 +10,6 @@
 <h4>Please add a new comment</h4>
 <br>
 {% import "comment_form.html" as comment_form %}
-{{ comment_form.render(comment_url = url_for("add_comment_to_answer", question_id=question["id"])) }}
+{{ comment_form.render(comment_url = url_for("add_comment_to_answer", question_id=question["id"], username=username)) }}
 </body>
 </html>
