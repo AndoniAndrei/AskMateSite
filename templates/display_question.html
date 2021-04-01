@@ -115,9 +115,7 @@
     </ul>
 </div>
 
-
 <br>
-
 
 <br>
 <h3> Question Answer(s):</h3>
@@ -129,19 +127,8 @@
             <p>
                 > {{ answer["message"] }}
             </p>
-            {% if username == answer.username %}
+            {% if username == question.username %}
                 <button>
-                    <a href="{{ url_for('delete_answer', answer_id=answer.id, question_id=answer.question_id) }}">
-                        Delete Answer
-                    </a>
-                </button>
-
-                <br/>
-                <button>
-                    <a href="{{ url_for("edit_answer", question_id=answer.question_id, answer_id=answer.id) }}">
-                        Edit Answer
-                    </a>
-
                     <a href="{{ url_for("accept_answer", question_id=answer.question_id, answer_id=answer.id) }}">
                         {% if answer.accepted == True %}
                             Reject Answer
@@ -149,9 +136,23 @@
                             Accept Answer
                         {% endif %}
                     </a>
-
                 </button>
             {% endif %}
+
+            {% if username == answer.username %}
+                <button>
+                    <a href="{{ url_for('delete_answer', answer_id=answer.id, question_id=answer.question_id) }}">
+                        Delete Answer
+                    </a>
+                </button>
+                <br/>
+                <button>
+                    <a href="{{ url_for("edit_answer", question_id=answer.question_id, answer_id=answer.id) }}">
+                        Edit Answer
+                    </a>
+                </button>
+            {% endif %}
+
             <br>
             <h3>Check out the comments bellow :))</h3>
             <br>
