@@ -8,8 +8,7 @@ def get_all_data(cursor, table, order_by, direction):
         f"""
      SELECT * FROM {table}
      ORDER BY {order_by} {direction}
-     """
-    )
+     """)
     data = cursor.fetchall()
     return data
 
@@ -73,34 +72,36 @@ def get_answer_by_answer_id(cursor, table, answer_id):
 
 
 @database_common.connection_handler
-def add_new_question(cursor, title, message, image):
+def add_new_question(cursor, title, message, image, username):
     submission_time = controller.date_and_time()
     cursor.execute(
         f"""
-    INSERT INTO question(submission_time, view_number, vote_number, title, message, image)
-    VALUES (%(submission_time)s,0, 0, %(title)s, %(message)s, %(image)s)
+    INSERT INTO question(submission_time, view_number, vote_number, title, message, image, username)
+    VALUES (%(submission_time)s,0, 0, %(title)s, %(message)s, %(image)s, %(username)s)
     """,
         {
             "submission_time": submission_time,
             "title": title,
             "message": message,
             "image": image,
+            "username": username
         },
     )
 
 
 @database_common.connection_handler
-def add_new_answer(cursor, message, image, question_id):
+def add_new_answer(cursor, message, image, question_id, username):
     submission_time = controller.date_and_time()
     cursor.execute(
         f"""
-    INSERT INTO answer(submission_time, vote_number, question_id, message, image)
-    VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s) """,
+    INSERT INTO answer(submission_time, vote_number, question_id, message, image, username)
+    VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s, %(username)s) """,
         {
             "submission_time": submission_time,
             "message": message,
             "image": image,
             "question_id": question_id,
+            "username": username
         },
     )
 
@@ -117,7 +118,7 @@ def delete_data(cursor, data_id, table):
 
 
 @database_common.connection_handler
-def edit_question(cursor, table, item_id, title, message, image):
+def edit_question(cursor, table, item_id, title, message, image, username):
     column = "id"
     cursor.execute(
         f"""
@@ -125,28 +126,24 @@ def edit_question(cursor, table, item_id, title, message, image):
     SET title = %(title)s, message = %(message)s, image = %(image)s
     WHERE {column} = %(id)s 
     """,
-        {"message": message, "title": title, "image": image, "id": item_id},
+        {"message": message, "title": title, "image": image, "id": item_id, "username": username},
     )
 
 
 @database_common.connection_handler
-def edit_answer(cursor, answer_id, message):
+def edit_answer(cursor, answer_id, message, username):
     cursor.execute(f"""
     UPDATE answer SET message = %(message)s
     WHERE id = %(id)s
-        """,
-                   {"id": answer_id, "message": message}
-                   )
+        """, {"id": answer_id, "message": message, "username": username})
 
 
 @database_common.connection_handler
-def edit_comment(cursor, comment_id, message):
+def edit_comment(cursor, comment_id, message, username):
     cursor.execute(f"""
         UPDATE comment SET message = %(message)s
         WHERE id = %(id)s
-            """,
-                   {"id": comment_id, "message": message}
-                   )
+            """, {"id": comment_id, "message": message, "username": username})
 
 
 @database_common.connection_handler
@@ -168,31 +165,33 @@ def register_answer_vote(cursor, answer_id, question_id, vote):
 
 
 @database_common.connection_handler
-def add_comment_question(cursor, question_id, message):
+def add_comment_question(cursor, question_id, message, username):
     submission_time = controller.date_and_time()
     cursor.execute(
         f"""
-    INSERT INTO comment(submission_time, question_id, message)
-    VALUES (%(submission_time)s, %(question_id)s, %(message)s)""",
+    INSERT INTO comment(submission_time, question_id, message, username)
+    VALUES (%(submission_time)s, %(question_id)s, %(message)s, %(username)s)""",
         {
             "submission_time": submission_time,
             "message": message,
             "question_id": question_id,
+            "username": username
         },
     )
 
 
 @database_common.connection_handler
-def add_comment_answer(cursor, answer_id, message):
+def add_comment_answer(cursor, answer_id, message, username):
     submission_time = controller.date_and_time()
     cursor.execute(
         f"""
-    INSERT INTO comment(answer_id, message, submission_time)
-    VALUES (%(answer_id)s, %(message)s, %(submission_time)s)""",
+    INSERT INTO comment(answer_id, message, submission_time, username)
+    VALUES (%(answer_id)s, %(message)s, %(submission_time)s, %(username)s)""",
         {
             "submission_time": submission_time,
             "answer_id": answer_id,
-            "message": message
+            "message": message,
+            "username": username
         }
     )
 
@@ -208,7 +207,8 @@ def create_user_registration(cursor, username, password_hash):
         'password_hash': password_hash,
         'date_of_registration': date_of_registration,
 
-    })
+        }
+    )
     return
 
 
@@ -285,7 +285,8 @@ def update_question_tag_table(cursor, question_id, tag_id):
                    {
                        "question_id": question_id,
                        "tag_id": tag_id
-                   })
+                   }
+    )
 
 
 @database_common.connection_handler
@@ -354,7 +355,7 @@ def get_data_by_username(cursor, table, username):
     cursor.execute(
         f"""
       SELECT * FROM {table}
-      WHERE 'username' = %(username)s;
+      WHERE username = %(username)s;
       """,
         {"username": username}
     )
@@ -370,13 +371,11 @@ def update_question_view(cursor, question_id):
                         WHERE id = %(question_id)s
     """,
                    {"question_id": question_id}
-                   )
+    )
 
 
-
-
-# cursor.execute("""
-#                    UPDATE answer SET vote_number = vote_number + %(vote)s
-#                    WHERE id= %(answer_id)s and question_id = %(question_id)s
-#                    """,
-#                    {"answer_id": answer_id, "question_id": question_id, "vote": vote})
+@database_common.connection_handler
+def bind_question_to_user(cursor, question_id, user):
+    cursor.execute(f"""
+    SELECT username from question
+    WHERE question_id = %(question_id)s """)

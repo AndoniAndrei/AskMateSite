@@ -1,27 +1,20 @@
 from flask import Flask, url_for, render_template, request, redirect, session
-
-import os
 import repositories
 import controller
 from dotenv import load_dotenv
 
-load_dotenv()
 
+load_dotenv()
 app = Flask(__name__)
 app.secret_key = '$2b$12$yxO3U5wrC1QSvVfL3xrLbu'
-
-
-# app.config['SESSION_TYPE'] = 'memcached'
-# app.config['SECRET_KEY'] = 'super secret key'
-# sess = Session()
 
 
 @app.route("/")
 def home():
     questions = repositories.get_last_5_questions()
     if request.args.get("search"):
-        search = request.args.get("search")
-        return redirect(url_for("search", search_phrase=search))
+        search_action = request.args.get("search")
+        return redirect(url_for("search", search_phrase=search_action))
     return render_template("home.html", questions=questions)
 
 
@@ -53,7 +46,7 @@ def display_question_by_id(question_id):
     tags = repositories.get_question_tags(question_id)
     question["view_number"] = int(question["view_number"]) + 1
     repositories.update_question_view(question_id)
-    return render_template("display_question.html",username=username, question=question, answers=answers, comments=comments, tags=tags)
+    return render_template("display_question.html", username=username, question=question, answers=answers, comments=comments, tags=tags)
 
 
 @app.route("/search/<search_phrase>", methods=["POST", "GET"])
@@ -73,22 +66,23 @@ def add_question():
 
         if image == "":
             image = None
-        repositories.add_new_question(title, message, image)
+        repositories.add_new_question(title, message, image, username)
         return redirect(url_for("question_list"))
     return render_template("add_question.html", username=username)
 
 
 @app.route("/question/<question_id>/new-answer", methods=["POST"])
 def add_answer(question_id):
+    username = session['username'] if 'username' in session else None
     if request.method == "POST":
 
         message = request.form["message"]
         image = ""
-        repositories.add_new_answer(message, image, question_id)
+        repositories.add_new_answer(message, image, question_id, username)
         return redirect("/question/" + question_id)
 
     question = repositories.get_data_by_question_id("question", question_id)[0]
-    return render_template("add_answer.html", question=question)
+    return render_template("add_answer.html", question=question, username=username)
 
 
 @app.route("/question/<question_id>/delete")
@@ -138,30 +132,31 @@ def vote_down_answer(answer_id, question_id):
 
 @app.route("/question/<question_id>/new_comment", methods=["POST"])
 def add_comment_to_question(question_id):
+    username = session['username'] if 'username' in session else None
     if request.method == "POST":
         message = request.form["message"]
-        repositories.add_comment_question(question_id, message)
+        repositories.add_comment_question(question_id, message, username)
         return redirect("/question/" + question_id)
     comment = repositories.get_data_by_question_id("comment", question_id)[0]
-    return render_template("add_comment_to_question.html", comment=comment)
+    return render_template("add_comment_to_question.html", comment=comment, username=username)
 
 
 @app.route("/answer/<question_id>/<answer_id>/new_comment", methods=["POST"])
-def add_comment_to_answer(question_id, answer_id):
+def add_comment_to_answer(question_id, answer_id, username):
     if request.method == "POST":
         message = request.form["message"]
-        repositories.add_comment_answer(answer_id, message)
+        repositories.add_comment_answer(answer_id, message, username)
         return redirect("/question/" + question_id)
     comment = repositories.get_data_by_question_id("comment", question_id)[0]
-    return render_template("add_comment_to_answer.html", comment=comment)
+    return render_template("add_comment_to_answer.html", comment=comment, username=username)
 
 
 @app.route("/answer/<question_id>/<answer_id>/edit_answer", methods=["GET", "POST"])
-def edit_answer(question_id, answer_id):
+def edit_answer(question_id, answer_id, username):
     if request.method == "POST":
         message = request.form["message"]
         # image = request.form["image"]
-        repositories.edit_answer(answer_id, message)
+        repositories.edit_answer(answer_id, message, username)
         return redirect(url_for("display_question_by_id", question_id=question_id))
     return render_template("answer_form.html")
 
@@ -255,22 +250,13 @@ def users():
 
 @app.route('/user_page/<username>')
 def user_page(username):
-    user_attributes = repositories.get_one_user_attributes
+    user_attributes = repositories.get_one_user_attributes(username)
     questions = repositories.get_data_by_username('question', username)
+    print(questions)
     answers = repositories.get_data_by_username('answer', username)
     comment = repositories.get_data_by_username('comment', username)
     return render_template('user_page.html', user_attributes=user_attributes, questions=questions, answers=answers, comment=comment)
 
-# @app.route('/question/<question_id>')
-# def question_view_count(question_id):
-#     repositories.count_question_view(question_id)
-#     return redirect("/question/" + question_id)
-#
 
 if __name__ == "__main__":
-    # SECRET_KEY = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
-    # app.secret_key = 'super secret key'
-    # app.config['SESSION_TYPE'] = 'filesystem'
-    #
-    # sess.init_app(app)
     app.run(port=4000, debug=True)

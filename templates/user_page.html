@@ -6,47 +6,67 @@
 </head>
 <body>
 <div>
-        <div>
-            <h1>{{ user_attributes['username'] }}</h1>
-            <div id="question_info">
-                <p>reputation: {{ user_attributes['reputation'] }}</p>
-                <p>{{ user_attributes['date_of_registration'] }}</p>
-            </div>
+    <div>
+        <h1>{{ user_attributes['username'] }}</h1>
+        <div id="question_info">
+            <p>reputation: {{ user_attributes['reputation'] }}</p>
+            <p>{{ user_attributes['date_of_registration'] }}</p>
         </div>
-        {% if number_of_questions != 0 %}
-            <div>
-                <h2>{{ number_of_questions }} Questions</h2>
-            </div>
-            <div>
-                <table>
-                    {% for row in questions %}
+    </div>
+    {% if number_of_questions != 0 %}
+        <div>
+            <h2>{{ number_of_questions }} Questions</h2>
+        </div>
+        <div>
+            <table>
+                {% for row in questions %}
                     <tr>
-                        <td><a href="{{ url_for('route_question_view_count', question_id=row['id']) }}">{{ row['title'] }}</a></td>
+
+                        <td>
+                            <a href="{{ url_for('display_question_by_id', question_id=row['id']) }}">{{ row['title'] }}</a>
+                        </td>
+
                         <td>{{ row['view_number'] }}<br>Views</td>
                         <td>{{ row['vote_number'] }}<br>Votes</td>
                         <td>{{ row['submission_time'] }}</td>
                     </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        {% endif %}
-        {% if number_of_answers != 0 %}
-            <div>
-                <h2>{{ number_of_answers }} Answers</h2>
-            </div>
-            <div>
-                <table>
-                    {% for row in answers %}
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+    {% if number_of_answers != 0 %}
+        <div>
+            <h2>{{ number_of_answers }} Answers</h2>
+        </div>
+        <div>
+            <table>
+                {% for row in answers %}
+
                     <tr>
                         <td>{{ row['message'] }}</td>
-                        <td><a href="{{ url_for('route_question_by_id', question_id=row['question_id']) }}">View Question</a></td>
+                        <td><a href="{{ url_for('display_question_by_id', question_id=row['question_id']) }}">View
+                            Question</a></td>
                         <td>{{ row['vote_number'] }}<br>Votes</td>
                         <td>{{ row['submission_time'] }}</td>
                     </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        {% endif %}
-    </div>
+                {% endfor %}
+            </table>
+        </div>
+        <div>
+            <table>
+                <h2>Comment</h2>
+                {% for row in comment %}
+
+                    <tr>
+                        <td>{{ row['message'] }}</td>
+                        {#                        <td><a href="{{ url_for('route_question_by_id', question_id=row['question_id']) }}">View Question</a></td>#}
+                        <td>{{ row['vote_number'] }}<br>Votes</td>
+                        <td>{{ row['submission_time'] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+</div>
 </body>
 </html>
