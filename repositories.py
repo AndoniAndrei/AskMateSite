@@ -417,9 +417,9 @@ def register_answer_vote_and_reputation(cursor, answer_id, question_id, vote, us
 
 
 @database_common.connection_handler
-def accept_answer(cursor, answer_id):
+def accept_answer_true(cursor, answer_id):
     cursor.execute("""
-        UPDATE answer
+        UPDATE answer 
         SET accepted = TRUE
         WHERE id = %(answer_id)s;
         UPDATE users
@@ -430,6 +430,37 @@ def accept_answer(cursor, answer_id):
              WHERE answer.id = %(answer_id)s )
         """, {'answer_id': answer_id}
         )
+    return True
+
+@database_common.connection_handler
+def accept_answer_false(cursor, answer_id):
+    cursor.execute("""
+        UPDATE answer 
+        SET accepted = FALSE
+        WHERE id = %(answer_id)s;
+        UPDATE users
+        SET reputation = reputation - 15
+        WHERE users.username in
+            (SELECT answer.username
+             FROM answer
+             WHERE answer.id = %(answer_id)s )
+        """, {'answer_id': answer_id}
+                   )
+    return False
+
+@database_common.connection_handler
+def get_all_tags(cursor, tag_id):
+    cursor.execute("""
+    SELECT question.id as qid, submission_time as qst, view_number as qvn, vote_number as vin, title as qt, message as qmsg, question.image as qimg
+    FROM question
+    INNER JOIN question_tag on question.id = question_tag.question_id
+    WHERE tag_id = %(tag_id)s
+    """,  {"tag_id" : tag_id }
+    )
+    return cursor.fetchall()
+
+
+
 
 # @database_common.connection_handler
 # def get_accepted_answer(cursor, question_id):

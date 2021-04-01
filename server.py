@@ -282,13 +282,22 @@ def user_page(username):
 
 @app.route('/<question_id>/<answer_id>/accept_answer')
 def accept_answer(question_id, answer_id):
-    # question = repositories.get_data_by_question_id('question',question_id)[0]
-    # if question['username'] != session['username']:
-    #     return 'You are not allowed to accept this answer'
-    repositories.accept_answer(answer_id)
-    username = session['username'] if 'username' in session else None
-    repositories.register_question_vote_and_reputation(answer_id, 15, username)
+    question = repositories.get_data_by_question_id('question',question_id)[0]
+    if question['username'] != session['username']:
+        return 'You are not allowed to accept this answer'
+    else:
+        accepted = repositories.accept_answer_true(answer_id)
+        username = session['username'] if 'username' in session else None
+        repositories.register_question_vote_and_reputation(answer_id, 15, username)
+        if accepted:
+            repositories.accept_answer_false(answer_id)
     return redirect(url_for('display_question_by_id', question_id=question_id))
+
+
+@app.route('/tags/<tag_id>')
+def tag_list(tag_id):
+    questions = repositories.get_all_tags(tag_id)
+    return render_template("tag_list.html", questions=questions)
 
 
 if __name__ == "__main__":

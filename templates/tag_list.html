@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tag list</title>
+</head>
+<body>
+<h1> Question List</h1>
+{% for question in questions %}
+    {{ question.title }}
+    {{ question.message }}
+
+{% endfor %}
+
+</body>
+</html>
