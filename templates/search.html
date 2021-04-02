@@ -8,8 +8,8 @@
     <title>Home Page</title>
 </head>
 <body class="body">
-
-
+<h3>Your Search results is bellow!<h3></h3>
+<div class = user-page-bottom>
 {% for found_line in found_data %}
     {% if found_line["title"] == None %}
         {% set begin_index = found_line["title"].find(search_phrase) %}
@@ -26,6 +26,6 @@
     <br>
 
 {% endfor %}
-
+</div>
 </body>
 {% endblock %}

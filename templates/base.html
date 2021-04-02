@@ -29,9 +29,11 @@
         </div>
         <div class="login">
             <div class="search">
-                <form action="/search" method="get">
-                    <label for="search"></label>
-                    <input name="search" id="search_bar" placeholder="Search...">
+                <form action="{{ url_for("home") }}" class="form">
+                    <label for="search">Search:</label>
+                    <input type="search" name="search">
+                    <input type="submit">
+
                 </form>
             </div>
             {% if not username %}
