@@ -1,11 +1,11 @@
 {% macro render(question_url, title='', message='', image='' ) %}
 
-    <h3>
+{#    <h3>#}
         <form class="login" action="{{ question_url }}" method="POST" enctype="multipart/form-data"
               xmlns="http://www.w3.org/1999/html">
             <p>
                 <label for="title">Question title:</label>
-                <input name="title" id="title" type="text" value="{{ title }}"</input>
+                <input name="title" id="title" type="text" value="{{ title }}"/>
             </p>
             <label for="message">Message: </label>
             <textarea id="message" name="message">{{ message }}</textarea>
@@ -13,10 +13,11 @@
                 <label for="image"> &nbsp;Add Image URL here:</label>
                 <input name="image" id="image" type="text" value="{{ image }}"/>
             </p>
-
-            <button type="submit">Save</button>
-            </p><br>
+            <p>
+                <button type="submit">Save</button>
+            </p>
+            <br>
 
         </form>
-    </h3>
+{#    </h3>#}
 {% endmacro %}

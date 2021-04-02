@@ -3,12 +3,13 @@
 {% block title %}AskMate{% endblock %}
 {% block content %}
 <head>
-    <link rel="stylesheet" href="../static/style.css">
+{#    <link rel="stylesheet" href="../static/style.css">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <meta charset="UTF-8">
     <title>Home Page</title>
 </head>
 <body class="body">
-<h3>Your Search results is bellow!<h3></h3>
+<h3>Your Search results is bellow!</h3>
 <div class = user-page-bottom>
 {% for found_line in found_data %}
     {% if found_line["title"] == None %}

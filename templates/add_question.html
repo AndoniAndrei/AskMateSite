@@ -3,7 +3,8 @@
 {% block title %}AskMate{% endblock %}
 {% block content %}
 <head>
-    <link rel="stylesheet" href="../static/style.css">
+{#    <link rel="stylesheet" href="../static/style.css">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <meta charset="UTF-8">
     <title></title>
 </head>

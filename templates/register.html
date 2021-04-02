@@ -9,7 +9,7 @@
 <body>
 <<div class="input_form">
         <h1>Registration</h1><br>
-        <form action="/registration", method="post">
+        <form action="{{ url_for('user_registration') }}" method="post">
             <p>
                 <label for="username">Username:</label><br>
                 <input id="username" name="username" required maxlength="20">
