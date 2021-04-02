@@ -1,17 +1,69 @@
-{% extends "base.html" %}
-
-{% block title %}AskMate{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <link rel="stylesheet" href="../static/style.css">
     <meta charset="UTF-8">
-    <title></title>
+    <title>ASK MATE 3</title>
+
 </head>
+
 <body class="body">
+{#<header>#}
+{#    <div id="header_box">#}
+{#        <div class="links">#}
+{#            <a href="/">#}
+{#                <div class="header_element">#}
+{#                    ASKMATE#}
+{#                </div>#}
+{#            </a>#}
+{#            <a href="{{ url_for('add_question') }}">#}
+{#                <div class="header_element">#}
+{#                    ASK QUESTION#}
+{#                </div>#}
+{#            </a>#}
+{#            <a href="{{ url_for('users') }}">#}
+{#                <div class="header_element">#}
+{#                    LIST USERS#}
+{#                </div>#}
+{#            </a>#}
+{#        </div>#}
+{#        <div class="login">#}
+{#            <div class="search">#}
+{#                <form action="/search" method="get">#}
+{#                    <label for="search"></label>#}
+{#                    <input name="search" id="search_bar" placeholder="Search...">#}
+{#                </form>#}
+{#            </div>#}
+{#            {% if not username %}#}
+{#                <a href="/registration">#}
+{#                    <div class="header_element" id="register">#}
+{#                        REGISTER#}
+{#                    </div>#}
+{#                </a>#}
+{#                <a href="{{ url_for('login') }}">#}
+{#                    <div class="header_element" id="login">#}
+{#                        LOGIN#}
+{#                    </div>#}
+{#                </a>#}
+{#            {% else %}#}
+{#                <a href="{{ url_for('user_page', username=username) }}">#}
+{#                    <div class="header_element" id="user_page">#}
+{#                        USER PAGE#}
+{#                    </div>#}
+{#                </a>#}
+{#                <a href="{{ url_for('logout') }}">#}
+{#                    <div class="header_element" id="login">#}
+{#                        LOGOUT#}
+{#                    </div>#}
+{#                </a>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#    </div>#}
+{#</header>#}
 <br>
 <h4>Please add a new comment</h4>
 <br>
 {% import "comment_form.html" as comment_form %}
 {{ comment_form.render(comment_url = url_for("add_comment_to_question", question_id=question["id"])) }}
 </body>
-{% endblock %}
+</html>

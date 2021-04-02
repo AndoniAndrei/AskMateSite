@@ -31,27 +31,61 @@
     <br>
     <br>
     <div class="X">
-        {#        <h2>Question:</h2>#}
-        <ul>
-            <li>
-                <h3><span>Question Title:</span></h3>
-                <p>{{ question.title }}</p>
-            </li>
-            {#        <br>#}
-            <li>
-                <h3><span>Question Message:</span></h3>
-                <p>{{ question.message }}</p>
-            </li>
-            {#        <br>#}
-            <li>
-                <p>
-                    {% if question.image %}
-                        <img class="img" src="{{ question.image }}" width="auto" height="auto"/>
+        <div class="X">
+            {#        <h2>Question:</h2>#}
+            <ul>
+                <li>
+                    <h3><span>Question Title:</span></h3>
+                    <p>{{ question.title }}</p>
+                </li>
+                {#        <br>#}
+                <li>
+                    <h3><span>Question Message:</span></h3>
+                    <p>{{ question.message }}</p>
+                </li>
+                {#        <br>#}
+                <li>
+                    <p>
+                        {% if question.image %}
+                            <img class="img" src="{{ question.image }}" width="auto" height="auto"/>
 
+                        {% endif %}
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="panel-wrapper">
+            <a href="#showq" class="show btn" id="showq">See the comments of this question!</a>
+            <a href="#hideq" class="hide btn" id="hideq">Hide the comments of this question!</a>
+            <div class="panel">
+                {#            <h1>Comments of this question</h1>#}
+
+                {% for comment in comments %}
+                    {% if question.id == comment.question_id %}
+                        <li>
+                            {{ comment["message"] }}
+                        </li>
+                        <a href="{{ url_for("edit_comment", question_id=question.id, comment_id=comment.id) }}">
+                            Edit Comment
+                        </a>
+                        <br>
+                        <a href="{{ url_for("delete_question_comment", question_id=question.id, comment_id=comment.id) }}">
+                            Delete Comment
+                        </a>
                     {% endif %}
-                </p>
-            </li>
-        </ul>
+                {% endfor %}
+            <br><br><br><br><br><br>
+            </div>
+        </div>
+
+
+    </div><!-- end panel -->
+    <div class="fade"></div>
+    </div>
+    </div>
+
     </div>
     <div class="X">
 
@@ -179,31 +213,7 @@
     </form>
 
     <br>
-    <div class="X">
-        <h1>Comments of this question</h1>
-        <ul class="SG">
-            <li class="sgLi">
-                <div class="box">
-                    <ul class="df">
-                        {% for comment in comments %}
-                            {% if question.id == comment.question_id %}
-                                <li>
-                                    {{ comment["message"] }}
-                                </li>
-                                <a href="{{ url_for("edit_comment", question_id=question.id, comment_id=comment.id) }}">
-                                    Edit Comment
-                                </a>
-                                <br>
-                                <a href="{{ url_for("delete_question_comment", question_id=question.id, comment_id=comment.id) }}">
-                                    Delete Comment
-                                </a>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </div>
-            </li>
-        </ul>
-    </div>
+
 
     <br>
 

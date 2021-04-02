@@ -11,18 +11,18 @@
         <div>
             <h1>{{ user_attributes['username'] }}</h1>
             <h3>
-            <div class="form">
-                <p>This user has {{ user_attributes['reputation'] }} points</p>
-                <p>His date of registration is {{ user_attributes['date_of_registration'] }}</p>
-            </div>
+                <div class="form">
+                    <p>This user has {{ user_attributes['reputation'] }} points</p>
+                    <p>His date of registration is {{ user_attributes['date_of_registration'] }}</p>
+                </div>
             </h3>
         </div>
         {% if number_of_questions != 0 %}
-            <div>
+            <div >
                 <h2>{{ number_of_questions }} Questions</h2>
             </div>
-            <div >
-                <table>
+            <div id="users_table">
+                <table >
                     {% for row in questions %}
                         <tr>
 
@@ -39,10 +39,10 @@
             </div>
         {% endif %}
         {% if number_of_answers != 0 %}
-            <div>
+            <div id="users_table">
                 <h2>{{ number_of_answers }} Answers</h2>
             </div>
-            <div>
+            <div id="users_table">
                 <table>
                     {% for row in answers %}
 
@@ -56,7 +56,7 @@
                     {% endfor %}
                 </table>
             </div>
-            <div>
+            <div id="users_table">
                 <table>
                     <h2>Comment</h2>
                     {% for row in comment %}
