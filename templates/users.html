@@ -12,8 +12,8 @@
             {% for row in users %}
                 <tr>
                     <td><a href="{{ url_for('user_page', username=row['username']) }}">{{ row['username'] }}</a></td>
-                    <td>{{ row['reputation'] }}<br>Reputation</td>
-                    <td>{{ row['date_of_registration'] }}</td>
+                    <td>{{ row['reputation'] }}<br>Points of reputation</td>
+                    <td>Date of registration <br>{{ row['date_of_registration'] }}</td>
                 </tr>
             {% endfor %}
         </table>

@@ -3,8 +3,11 @@
 {% block title %}AskMate{% endblock %}
 {% block content %}
     <title>List of Questions</title>
-    <div>
+    <br>
+    <div class="center">
         <a class="myButton" href="{{ url_for('add_question') }}">Add a new question</a>
+    </div>
+    <div class="center">
         <br/>
         <form class="form" action="{{ url_for('question_list') }}" method="GET">
             <label for="order_by">Order by:</label>
@@ -24,64 +27,66 @@
             <button type="submit">Apply Order</button>
         </form>
         <br/>
-        <div class="container">
-            <table>
-                <thead>
-                <tr>
-                    {% for header in "id", "submission_time","view_number",
+    </div>
+
+    <div class="question-page_table">
+        <table>
+            <thead>
+            <tr>
+                {% for header in "id", "submission_time","view_number",
                     "vote_number", "title", "message", "image", "vote_up", "vote_down" %}
-                        <th>{{ header }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                {% for question in questions %}
-                    <tr>
-                        <td>{{ question.id }}</td>
-                        <td>{{ question.submission_time }}</td>
-                        <td>{{ question.view_number }}</td>
-                        <td>{{ question.vote_number }}</td>
-                        <td>
-                            <strong>
-                                <a
-                                        href="{{ url_for('display_question_by_id', question_id=question.id) }}"
-                                >
-                                    {{ question.title }}
-                                </a>
-                            </strong>
-                        </td>
-                        <td>{{ question.message }}</td>
-                        <td>
-                            {% if question.image %}
-                                <img
-                                        src="{{ question.image }}"
-                                        alt=""
-                                        width="20"
-                                        height="20"
-                                />
-                            {% endif %}
-                        </td>
-                        <td>
-                            <form
-                                    action="{{ url_for('vote_up_question', question_id=question["id"]) }}"
-                                    method="POST"
-                            >
-                                <button class="btn btn-primary" type="submit">Vote Up</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form
-                                    action="{{ url_for('vote_down_question', question_id=question["id"]) }}"
-                                    method="POST"
-                            >
-                                <button class="btn btn-primary" type="submit">Vote Down</button>
-                            </form>
-                        </td>
-                    </tr>
+                    <th>{{ header }}</th>
                 {% endfor %}
-                </tbody>
-            </table>
-            <br><br><br>
-        </div>
+            </tr>
+            </thead>
+            <tbody>
+            {% for question in questions %}
+                <tr>
+                    <td>{{ question.id }}</td>
+                    <td>{{ question.submission_time }}</td>
+                    <td>{{ question.view_number }}</td>
+                    <td>{{ question.vote_number }}</td>
+                    <td>
+                        <strong>
+                            <a
+                                    href="{{ url_for('display_question_by_id', question_id=question.id) }}"
+                            >
+                                {{ question.title }}
+                            </a>
+                        </strong>
+                    </td>
+                    <td>{{ question.message }}</td>
+                    <td>
+                        {% if question.image %}
+                            <img
+                                    src="{{ question.image }}"
+                                    alt=""
+                                    width="20"
+                                    height="20"
+                            />
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form
+                                action="{{ url_for('vote_up_question', question_id=question["id"]) }}"
+                                method="POST"
+                        >
+                            <button class="vote_up" type="submit">Like</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form
+                                action="{{ url_for('vote_down_question', question_id=question["id"]) }}"
+                                method="POST"
+                        >
+                            <button class="vote_down" type="submit">Dislike</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br><br>
+    </div>
     </div>
 {% endblock %}
