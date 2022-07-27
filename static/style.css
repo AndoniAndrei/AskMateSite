@@ -411,7 +411,6 @@ table {
 }
 
 #content_wrapper {
-    background-image: url("../images/18.png");
     background-size: cover;
     background-attachment: fixed;
     margin: 0 auto;
